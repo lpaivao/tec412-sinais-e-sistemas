@@ -1,0 +1,663 @@
+# Resoluções da Lista de Sinais
+
+## Questão 1
+**Defina o que é um sinal e o que é um sistema.**
+
+- **Sinal**: Matematicamente, um sinal é uma função de uma ou mais variáveis independentes que transporta informações acerca do comportamento, estado ou natureza de algum fenômeno físico (segundo Haykin e Oppenheim). A variável independente mais comum em sistemas de engenharia é o tempo ($t$ para contínuos, $n$ para discretos), mas pode também ser o espaço (como em imagens bidimensionais). Formalmente, um sinal unidimensional pode ser visto como um mapeamento $x: \mathbb{R} 	o \mathbb{R}$ ou $x: \mathbb{R} 	o \mathbb{C}$. Exemplos incluem o registro de um eletrocardiograma (ECG), a tensão variável $v(t)$ nos terminais de um componente, ou as ondas sonoras se propagando em um meio.
+- **Sistema**: É uma interconexão de componentes, dispositivos ou algoritmos – seja de natureza física ou puramente matemática – que processa ou transforma um sinal de entrada (sinal de excitação, $x(t)$) para produzir um sinal de saída (sinal de resposta, $y(t)$). Pode ser representado por um operador de transformação matemática $\mathcal{H}$, tal que $y(t) = \mathcal{H}\{x(t)\}$. O objetivo de um sistema é extrair informações, eliminar ruídos ou controlar a dinâmica do sinal original.
+
+## Questão 2
+**Cite 3 exemplos de sistemas e sinais inerentes a eles.**
+
+1. **Filtro Passa-Baixas em um Circuito RC**: 
+   - *Sistema*: A malha elétrica composta por um resistor e um capacitor, regida por uma equação diferencial linear ordinária (EDO). 
+   - *Sinais Inerentes*: O sinal de entrada $x(t)$ é a tensão aplicada aos terminais do circuito, e o sinal de saída $y(t)$ é a tensão medida sobre o capacitor, que rejeita as componentes de alta frequência do sinal de entrada.
+2. **Sistema de Equalização de Áudio Digital**: 
+   - *Sistema*: Um processador de sinal digital (DSP) que implementa filtros digitais por meio de equações de diferenças recursivas ou convolucionais.
+   - *Sinais Inerentes*: O sinal de entrada $x[n]$ é o fluxo de amostras de áudio não processadas, e a saída $y[n]$ é o fluxo de amostras de áudio com as bandas de frequência ajustadas (ganho/atenuação) para melhor percepção acústica.
+3. **Suspensão Automotiva (Sistema Mecânico)**: 
+   - *Sistema*: Conjunto mecânico composto por massa, molas e amortecedores, que modela a dinâmica de um veículo e atenua os impactos de acordo com suas constantes de amortecimento e elasticidade.
+   - *Sinais Inerentes*: O sinal de entrada $x(t)$ é o perfil vertical da pista (elevação ou buracos) à medida que o pneu do carro se desloca, e o sinal de saída $y(t)$ é a vibração ou o deslocamento vertical transmitido à cabine de passageiros.
+
+## Questão 3
+**Defina e diferencie os conceitos de sinais contínuos e discretos. Cite exemplos.**
+
+- **Sinal de Tempo Contínuo ($x(t)$)**: É um sinal definido em todos os instantes de tempo dentro de um intervalo contínuo. A variável independente assume valores não enumeráveis no domínio dos reais ($t \in \mathbb{R}$). 
+  *Exemplo*: A trajetória da temperatura em um ambiente ao longo de 24 horas aferida por um termopar analógico, ou a velocidade inercial de um carro de Fórmula 1 durante uma corrida.
+- **Sinal de Tempo Discreto ($x[n]$)**: É um sinal definido apenas em instantes específicos e separados (enumeráveis). A variável independente assume valores em um conjunto discreto, tipicamente o conjunto dos números inteiros ($n \in \mathbb{Z}$). Eles são comumente obtidos amostrando um sinal contínuo a uma taxa de período constante, tal que o tempo é mapeado como $t = nT_s$.
+  *Exemplo*: A aferição e registro do nível de água de um reservatório feita estritamente a cada exata uma hora pelo controlador, ou o histórico de valores de fechamento diário do índice da Bolsa de Valores.
+- **Diferenciação Fundamental**: A distinção reside exclusivamente na natureza do **domínio** da variável independente (eixo horizontal). O contínuo tem domínio nos Reais (existindo "sempre"), enquanto o discreto tem domínio nos Inteiros (existindo em "saltos" temporais), independentemente de a amplitude assumir valores contínuos ou discretos.
+
+## Questão 4
+**Descreva as vantagens da abordagem digital sobre o processamento analógico de sinais.**
+
+O Processamento Digital de Sinais (PDS/DSP) substituiu quase integralmente o analógico em projetos modernos, destacando-se por vantagens tecnológicas robustas:
+- **Reprodutibilidade Estrita e Imunidade Ambiental**: Circuitos analógicos são construídos com componentes físicos imperfeitos (resistores de tolerância 5%, capacitores afetados pelo calor) que sofrem desgaste, envelhecimento, e variações térmicas que alteram os parâmetros do sistema com o tempo (drift). Algoritmos digitais garantem resultados estritamente idênticos sempre, pois baseiam-se em cálculos matemáticos aritméticos exatos implementados no silício, sendo totalmente imunes a essas variações.
+- **Flexibilidade, Programabilidade e Atualização**: O comportamento e a equação de um filtro em um sistema digital pode ser modificada completamente de forma remota apenas atualizando o software ou o firmware no microcontrolador. No mundo analógico, alterar as frequências de corte exigiria soldar e trocar resistores na placa de circuito impresso.
+- **Armazenamento e Preservação**: Sinais digitais podem ser armazenados em discos rígidos, memórias flash e transmitidos pela internet para sempre sem qualquer degradação de fidelidade ou acúmulo das distorções de histerese (problema comum nas antigas fitas magnéticas VHS ou K7).
+- **Processamento Matemático Avançado**: O poder de cálculo permite a implementação em tempo real de lógicas não-lineares, filtros ideais com fase estritamente linear e técnicas como Transformada Rápida de Fourier (FFT), compressão (MP3) ou criptografia, que seriam monstruosamente caras ou fisicamente impossíveis em hardware puramente analógico.
+
+## Questão 5
+**Descreva as vantagens e desvantagens da utilização de sistemas digitais nas comunicações.**
+
+Sistemas de comunicação atuais (como 5G, Wi-Fi e fibra óptica) dependem essencialmente de arquitetura digital.
+**Vantagens nas Comunicações**:
+1. **Regeneração de Sinal Imune a Ruído Acumulado**: Em enlaces muito longos (como cabos submarinos), o sinal enfraquece e se mescla ao ruído. Os repetidores digitais conseguem não apenas amplificar o sinal, mas tomar uma decisão de limiar (se o bit lido era 0 ou 1) e regenerar o pulso perfeitamente "limpo" do outro lado. Em contraponto, repetidores analógicos sofrem do fatal "acúmulo de ruído", pois são obrigados a amplificar a sujeira junto com o sinal útil.
+2. **Confiabilidade e Códigos de Correção de Erros (FEC)**: Permite o uso de algoritmos matemáticos complexos (como códigos de bloco ou convolucionais) de redundância que conseguem recuperar os dados mesmo que pedaços inteiros do sinal cheguem corrompidos, blindando a comunicação sob os pilares do Teorema da Capacidade de Shannon.
+3. **Multiplexação Universal e Integração de Serviços**: Permite a transmissão transparente de dados incrivelmente diferentes, misturando pacotes de um vídeo de streaming, a voz de uma ligação VoIP, e arquivos de texto (tudo convertido na mesma "moeda": bits) num único canal físico usando TDM (Multiplexação por Divisão de Tempo).
+4. **Segurança e Criptografia**: As chaves criptográficas (ex: AES, RSA) só operam sobre pacotes digitais, oferecendo sigilo inviolável e privacidade garantida para o usuário e empresas.
+
+**Desvantagens nas Comunicações**:
+1. **Consumo Extensivo de Largura de Banda (Bandwidth)**: Devido às transições abruptas e altas taxas (taxa de Nyquist), os pulsos digitais quadrados ocupam um espectro de frequência muito mais largo. Para equalizar isso e evitar a Interferência Intersimbólica (ISI), os sistemas precisam de canais de altíssima banda passante (como fibras ou GHz via rádio), comparado à modulação estreita do rádio AM analógico.
+2. **Alta Complexidade e Custos de Sincronização Eletrônica**: O sistema é totalmente cego e inútil sem o "timing" matemático perfeito. Ele exige pesadas rotinas algorítmicas computacionais (como *clock and data recovery* - CDR ou PLLs) no receptor para estimar a fase correta e identificar o enquadramento sem engolir um bit errado.
+3. **Necessidade Estrutural de Converção (A/D e D/A)**: Como a fala humana e a natureza são analógicas, há inevitavelmente o custo computacional, o consumo de bateria, e a possível introdução de distorção (*aliasing* ou *clipping*) nos estágios obrigatórios de conversão de fronteira.
+
+## Questão 6
+**Defina e diferencie os conceitos de sinais analógicos e digitais.**
+
+- **Sinal Analógico**: É um sinal cuja **amplitude** apresenta variação contínua, significando que o sinal pode assumir uma infinidade contínua e não enumerável de valores de tensão ou corrente, sem lacunas ou saltos abruptos ditados por limitações técnicas, dentro de sua excursão dinâmica suportada. Matematicamente, a imagem da função possui infinitos pontos entre quaisquer dois níveis dados. Fisicamente, é a "analogia" nua e crua e direta proporcional a uma medição do mundo real.
+- **Sinal Digital**: É um sinal de natureza estritamente computacional, originado em um conversor (quantizador) onde tanto a **base de tempo** (variável independente) quanto a **amplitude** (variável dependente) foram discretizados/quantizados. Nele, a amplitude sofre um arredondamento forçado para ser encaixada em um dos níveis limitados e pré-definidos de um "degrau" quantizador (frequentemente restrito a combinações binárias $2^B$).
+- **A Grande Diferenciação**: O erro clássico de conceito é confundir "Contínuo" com "Analógico". A diferença entre "contínuo" e "discreto" define o EIXO HORIZONTAL (Tempo) do sinal. A diferença entre "analógico" e "digital" está frequentemente atrelada e governada pelo EIXO VERTICAL (Amplitude). Um sinal só é rigorosamente "Digital" quando sua representação da informação em ambos os eixos foi reduzida a limites finitos permitindo o armazenamento de precisão numérica contável (bits). Como o analógico possui infinitas casas decimais em teoria, não pode ser armazenado em computadores sem virar digital.
+
+## Questão 7
+**Cite e descreva cada uma das etapas de uma conversão analógico-digital (A/D).**
+
+Para aplicar o poder da computação e a inteligência dos processadores no mundo físico, precisamos que o sinal do mundo real cruze a fronteira nos famosos Conversores A/D (ADC). Esta tradução engloba sequencialmente as seguintes 3 etapas indispensáveis:
+1. **Amostragem (Sampling) [A Discretização Temporal]**: É o seletor. Consiste no processo de extrair instantâneos (amostras) do sinal analógico $x_a(t)$ em fatias temporais periódicas, espaçadas de um tempo $T_s$ (o Período de Amostragem). Assim o sinal contínuo vira $x[n] = x_a(nT_s)$. Este processo é fisicamente regido por uma chave seccionadora eletrônica (Sample and Hold). A regra de ouro matemática é imposta pelo *Teorema de Nyquist-Shannon*, o qual determina que o sinal só pode ser amostrado sem confusão espectral se e somente se a frequência de amostragem ($f_s = 1/T_s$) for fixada como sendo estritamente maior do que o dobro da máxima frequência ($f_{max}$) gerada pelo sinal (isto é, a Condição de Nyquist: $f_s > 2f_{max}$). Se for falha, surge a perigosa distorção de recobrimento (Aliasing). O sinal de saída dessa etapa já é discreto no tempo, mas as amplitudes de seus pontinhos ainda são flutuantes contínuas e infinitas.
+2. **Quantização (Quantization) [A Discretização de Amplitude]**: É o achatador / aproximador. O computador é incapaz de guardar números irracionais ou com infinitas casas depois da vírgula. A quantização recebe as amostras com amplitude infinita e as "arredonda" para forçá-las a se encaixar no degrau de tensão permitida mais próximo. Se o conversor adotar $L$ níveis escada de decisão, cada amostra sofrerá o corte (truncamento) dessa aproximação. A saída já se apresenta discreta em tempo e amplitude, porém, com um "preço" inestimável que foi a introdução do chamado *Ruído de Quantização* ou erro de arredondamento.
+3. **Codificação (Coding) [A Digitalização propriamente dita]**: O degrau quantizado e selecionado ainda não é uma linguagem que um PC entende. A última etapa mapeia qual foi o número do degrau e o atribui de forma unívoca uma "palavra binária" lógica formada por uns e zeros (bits). Por exemplo, num sistema operando com código binário natural de 8-bits ($B=8$), ele conta com uma escadaria de $2^8 = 256$ níveis ($L=256$), e emite na saída o dado como um byte literal `10010111`. Com a codificação concluída, o bloco emite definitivamente o *Sinal Digital*, perfeitamente formatado para o mundo moderno de TI e telecomunicações.
+
+## Questão 8
+*(Questão reservada para discussão de material em sala de aula, de acordo com as especificidades do professor).*
+
+
+## Questão 9
+**[1.7 Hsu, H. P.] Show that the product of two even signals or of two odd signals is an even signal and that the product of an even and an odd signal is an odd signal.**
+
+Seja $y(t) = x_1(t)x_2(t)$.
+
+1. **Produto de dois sinais pares**: 
+   Sabemos que $x_1(-t) = x_1(t)$ e $x_2(-t) = x_2(t)$.
+   Calculando $y(-t)$:
+   $$y(-t) = x_1(-t)x_2(-t) = x_1(t)x_2(t) = y(t)$$
+   Como $y(-t) = y(t)$, o produto de dois sinais pares é um sinal **par**.
+
+2. **Produto de dois sinais ímpares**:
+   Sabemos que $x_1(-t) = -x_1(t)$ e $x_2(-t) = -x_2(t)$.
+   Calculando $y(-t)$:
+   $$y(-t) = x_1(-t)x_2(-t) = (-x_1(t))(-x_2(t)) = x_1(t)x_2(t) = y(t)$$
+   Como $y(-t) = y(t)$, o produto de dois sinais ímpares é um sinal **par**.
+
+3. **Produto de um sinal par e um sinal ímpar**:
+   Seja $x_1(t)$ par ($x_1(-t) = x_1(t)$) e $x_2(t)$ ímpar ($x_2(-t) = -x_2(t)$).
+   Calculando $y(-t)$:
+   $$y(-t) = x_1(-t)x_2(-t) = x_1(t)(-x_2(t)) = -x_1(t)x_2(t) = -y(t)$$
+   Como $y(-t) = -y(t)$, o produto de um sinal par com um ímpar é um sinal **ímpar**.
+
+## Questão 10
+**[1.8 Hsu, H. P.] Show that**
+
+**a) If $x(t)$ and $x[n]$ are even, then:**
+Para o caso contínuo, podemos desmembrar a integral no intervalo simétrico:
+$$\int_{-a}^{a} x(t)dt = \int_{-a}^{0} x(t)dt + \int_{0}^{a} x(t)dt$$
+Na primeira integral do lado direito, façamos a substituição $\tau = -t \implies d\tau = -dt$. Os limites mudam de $[-a, 0]$ para $[a, 0]$:
+$$\int_{-a}^{0} x(t)dt = \int_{a}^{0} x(-\tau)(-d\tau) = \int_{0}^{a} x(-\tau)d\tau$$
+Como o sinal é par, $x(-\tau) = x(\tau)$. Logo:
+$$\int_{-a}^{a} x(t)dt = \int_{0}^{a} x(\tau)d\tau + \int_{0}^{a} x(t)dt = 2\int_{0}^{a} x(t)dt$$
+
+Para o caso discreto, desmembramos o somatório:
+$$\sum_{n=-k}^{k} x[n] = \sum_{n=-k}^{-1} x[n] + x[0] + \sum_{n=1}^{k} x[n]$$
+No primeiro somatório, fazendo a mudança de variável $m = -n$:
+$$\sum_{n=-k}^{-1} x[n] = \sum_{m=1}^{k} x[-m]$$
+Sendo o sinal par, $x[-m] = x[m]$. Assim:
+$$\sum_{n=-k}^{k} x[n] = \sum_{m=1}^{k} x[m] + x[0] + \sum_{n=1}^{k} x[n] = x[0] + 2\sum_{n=1}^{k} x[n]$$
+
+**b) If $x(t)$ and $x[n]$ are odd, then:**
+Pela definição de sinal ímpar, $x(-t) = -x(t)$. No instante $t=0$:
+$$x(0) = -x(0) \implies 2x(0) = 0 \implies x(0) = 0$$
+O mesmo vale para o tempo discreto: $x[0] = 0$.
+
+Para a integral:
+$$\int_{-a}^{a} x(t)dt = \int_{-a}^{0} x(t)dt + \int_{0}^{a} x(t)dt$$
+Substituindo $\tau = -t$ na primeira integral, temos $\int_{0}^{a} x(-\tau)d\tau$. Como o sinal é ímpar, $x(-\tau) = -x(\tau)$:
+$$\int_{-a}^{a} x(t)dt = -\int_{0}^{a} x(\tau)d\tau + \int_{0}^{a} x(t)dt = 0$$
+
+Para o somatório:
+$$\sum_{n=-k}^{k} x[n] = \sum_{n=-k}^{-1} x[n] + x[0] + \sum_{n=1}^{k} x[n]$$
+Como demonstrado acima, $x[0]=0$ e $\sum_{n=-k}^{-1} x[n] = \sum_{n=1}^{k} x[-n] = \sum_{n=1}^{k} -x[n]$. Logo:
+$$\sum_{n=-k}^{k} x[n] = -\sum_{n=1}^{k} x[n] + 0 + \sum_{n=1}^{k} x[n] = 0$$
+
+## Questão 11
+**[1.34 Oppenheim, A. V.] Neste problema, exploramos diversas propriedades dos sinais pares e ímpares.**
+
+**a) Mostre que se $x[n]$ é um sinal ímpar, então $\sum_{n=-\infty}^{\infty} x[n] = 0$**
+Essa afirmação é uma extensão direta da prova da Questão 9b para $k \to \infty$. Desmembrando o somatório:
+$$\sum_{n=-\infty}^{\infty} x[n] = \sum_{n=-\infty}^{-1} x[n] + x[0] + \sum_{n=1}^{\infty} x[n]$$
+Como $x[n]$ é ímpar, temos $x[0] = 0$ e $x[-n] = -x[n]$. Mudando o índice da primeira parcela para $m = -n$:
+$$\sum_{n=-\infty}^{\infty} x[n] = \sum_{m=1}^{\infty} x[-m] + 0 + \sum_{n=1}^{\infty} x[n] = \sum_{m=1}^{\infty} -x[m] + \sum_{n=1}^{\infty} x[n] = 0$$
+
+**b) Mostre que se $x_1[n]$ é um sinal ímpar e $x_2[n]$ é um sinal par, então $x_1[n]x_2[n]$ é um sinal ímpar.**
+Seja $y[n] = x_1[n]x_2[n]$. Para verificar a simetria, calculamos $y[-n]$:
+$$y[-n] = x_1[-n]x_2[-n]$$
+Sabendo que $x_1$ é ímpar ($x_1[-n] = -x_1[n]$) e $x_2$ é par ($x_2[-n] = x_2[n]$):
+$$y[-n] = (-x_1[n])(x_2[n]) = - (x_1[n]x_2[n]) = -y[n]$$
+Portanto, o produto de um sinal ímpar e um sinal par resulta em um sinal **ímpar**.
+
+## Questão 12
+**[1.2 Haykin, S.] Determine se os seguintes sinais são periódicos. Se forem periódicos, encontre o período fundamental.**
+
+**a) $x(t) = (\cos(2\pi t))^2$**
+Utilizando a identidade trigonométrica $\cos^2(\theta) = \frac{1}{2} + \frac{1}{2}\cos(2\theta)$:
+$$x(t) = \frac{1}{2} + \frac{1}{2}\cos(4\pi t)$$
+O sinal resultante tem uma componente DC e um cosseno de frequência angular $\omega_0 = 4\pi$.
+O período fundamental é $T_0 = \frac{2\pi}{\omega_0} = \frac{2\pi}{4\pi} = 0,5 \text{ s}$. 
+**Resposta**: Sim, periódico com $T_0 = 0,5$.
+
+**b) $x(t) = \sum_{k=-5}^{5} w(t - 2k)$ para $w(t)$ descrito na Figura P1.2b**
+Como o somatório é finito (de $k=-5$ a $k=5$), o sinal consistirá de apenas 11 réplicas do pulso $w(t)$. Fora desse intervalo (para $t \to \pm\infty$), o sinal será zero. Um sinal periódico não trivial deve estender-se ao infinito.
+**Resposta**: Não periódico (aperiódico).
+
+**c) $x(t) = \sum_{k=-\infty}^{\infty} w(t - 3k)$ para $w(t)$ descrito na Figura P1.2b**
+Este sinal é composto por infinitas réplicas do pulso $w(t)$, deslocadas no tempo por múltiplos inteiros de $3$. Isso se alinha perfeitamente com a definição de um sinal periódico: $x(t+T_0) = x(t)$. O deslocamento entre cada réplica é $3$.
+**Resposta**: Sim, periódico com período fundamental $T_0 = 3$.
+
+**d) $x[n] = (-1)^n$**
+Podemos reescrever este sinal como $x[n] = \cos(\pi n)$. A frequência angular discreta é $\Omega_0 = \pi$.
+A condição para periodicidade em tempo discreto é que $\frac{\Omega_0}{2\pi}$ seja racional:
+$\frac{\pi}{2\pi} = \frac{1}{2}$. Como é racional, o sinal é periódico. O período fundamental $N_0$ é o menor inteiro tal que $N_0 = 2 \cdot k$, o que dá $N_0 = 2$.
+**Resposta**: Sim, periódico com $N_0 = 2$.
+
+**e) $x[n] = (-1)^{n^2}$**
+Analisando para diferentes valores de $n$:
+- Se $n$ é par, $n^2$ também é par, logo $(-1)^{n^2} = 1$.
+- Se $n$ é ímpar, $n^2$ também é ímpar, logo $(-1)^{n^2} = -1$.
+Observamos que a paridade de $n^2$ é idêntica à de $n$. Portanto, $x[n] = (-1)^{n^2} \equiv (-1)^n$.
+**Resposta**: Sim, periódico com $N_0 = 2$.
+
+**f) $x[n]$ descrito na figura P1.2f**
+A figura mostra um padrão de impulsos que se repetem (grupos de 3 impulsos). Analisando os índices do gráfico, o padrão centraliza-se em deslocamentos regulares. Sendo um trem de impulsos infinito e repetitivo com espaçamento regular entre os grupos de mesmo formato. Pela inspeção visual dos eixos, o período de repetição do grupo é de $N_0 = 5$ amostras.
+**Resposta**: Sim, periódico com $N_0 = 5$.
+
+**g) $x(t)$ descrito na figura P1.2g**
+A figura mostra uma onda quadrada de duração infinita. A onda fica no patamar "1" por uma duração de 2 unidades, e no patamar "-1" por mais 2 unidades, de modo que um ciclo completo ocupa $4$ unidades de tempo no eixo horizontal.
+**Resposta**: Sim, periódico com $T_0 = 4$.
+
+**h) $x[n] = \cos(2n)$**
+A frequência angular discreta é $\Omega_0 = 2 \text{ rad/amostra}$.
+Para ser periódico, $\frac{\Omega_0}{2\pi} = \frac{2}{2\pi} = \frac{1}{\pi}$ deve ser um número racional.
+Como $\pi$ é irracional, a razão não é um número racional.
+**Resposta**: Não periódico (aperiódico).
+
+**i) $x[n] = \cos(2\pi n)$**
+Para todo $n$ inteiro, $2\pi n$ é um múltiplo de $2\pi$, o que implica que $\cos(2\pi n) = 1$ para todo $n \in \mathbb{Z}$.
+Trata-se de um sinal constante igual a 1.
+A frequência fundamental é $\Omega_0 = 0$, porém o menor período fundamental discreto válido (e estritamente positivo) para um sinal constante é $1$.
+**Resposta**: Sim, periódico com $N_0 = 1$.
+
+## Questão 13
+**[1.6 Oppenheim, A. V.] Considere um sistema de tempo discreto com entrada $x[n]$ e saída $y[n]$. A relação entrada-saída desse sistema é: $y[n] = x[n]x[n - 2]$**
+
+**a) O sistema é sem memória?**
+Não. Um sistema sem memória requer que a saída $y[n]$ em um instante $n$ dependa apenas da entrada $x[n]$ no mesmo instante. Como a saída depende de $x[n-2]$ (uma amostra passada da entrada), o sistema possui memória.
+
+**b) Determine a saída do sistema quando a entrada for $A\delta[n]$, em que $A$ é um número complexo ou real qualquer.**
+Substituindo $x[n] = A\delta[n]$ na equação do sistema:
+$$y[n] = (A\delta[n]) \cdot (A\delta[n - 2]) = A^2 \delta[n]\delta[n - 2]$$
+Sabemos que $\delta[n]$ só é não-nulo (vale 1) quando $n = 0$. Similarmente, $\delta[n-2]$ só é não-nulo quando $n = 2$.
+Não há nenhum valor de $n$ para o qual ambos os termos sejam simultaneamente diferentes de zero. O produto será zero para todo $n$.
+$$y[n] = 0 \quad \text{para todo } n$$
+
+**c) O sistema é invertível?**
+Não. Um sistema é invertível se, e somente se, entradas distintas produzirem saídas distintas (relação biunívoca). 
+Como vimos no item (b), a entrada $x_1[n] = A\delta[n]$ produz a saída $y_1[n] = 0$. 
+Se aplicarmos a entrada nula $x_2[n] = 0$, a saída também será $y_2[n] = 0$.
+Como entradas diferentes produziram a mesma saída, o sistema não é invertível.
+
+## Questão 14
+**[1.3 Haykin, S.] O sinal senoidal $x(t) = 3 \cos(200t + \pi/6)$ é passado através de um dispositivo de lei quadrática definido pela relação $y(t) = x^2(t)$. Mostre que a saída $y(t)$ consiste em um componente dc e em um componente senoidal.**
+
+Calculando a saída:
+$$y(t) = [3 \cos(200t + \pi/6)]^2 = 9 \cos^2(200t + \pi/6)$$
+Usando a identidade trigonométrica dada $\cos^2(\theta) = \frac{1}{2}(\cos(2\theta) + 1)$, com $\theta = 200t + \pi/6$:
+$$y(t) = 9 \left[ \frac{1}{2} + \frac{1}{2}\cos(2(200t + \pi/6)) \right]$$
+$$y(t) = 4,5 + 4,5 \cos(400t + \pi/3)$$
+Observa-se que $y(t)$ é a soma de uma constante ($4,5$) e de um componente senoidal que possui o dobro da frequência original.
+
+**a) Especifique o componente dc.**
+O componente DC (valor médio ou componente de frequência zero) é a constante na expressão acima:
+**Componente DC = 4,5**
+
+## Questão 15
+**[1.3 Oppenheim, A. V.] Determine os valores de $P_\infty$ e $E_\infty$ para cada um dos seguintes sinais:**
+
+A energia total $E_\infty$ e a potência média total $P_\infty$ são definidas como:
+$E_\infty = \int_{-\infty}^{\infty} |x(t)|^2 dt$  (ou a soma de $|x[n]|^2$ no tempo discreto)
+$P_\infty = \lim_{T \to \infty} \frac{1}{2T} \int_{-T}^{T} |x(t)|^2 dt$ (ou limite similar no tempo discreto)
+
+**a) $x_1(t) = e^{-2t}u(t)$**
+$E_\infty = \int_{-\infty}^{\infty} |e^{-2t}u(t)|^2 dt = \int_{0}^{\infty} e^{-4t} dt = \left[ \frac{e^{-4t}}{-4} \right]_0^\infty = 0 - \left( \frac{-1}{4} \right) = \frac{1}{4} \text{ J}$
+Como $E_\infty$ é finita, a potência média é $P_\infty = 0$.
+
+**b) $x_2(t) = e^{j(2t + \pi/4)}$**
+A magnitude é $|x_2(t)| = |e^{j(2t + \pi/4)}| = 1$.
+$E_\infty = \int_{-\infty}^{\infty} 1^2 dt = \infty$
+$P_\infty = \lim_{T \to \infty} \frac{1}{2T} \int_{-T}^{T} 1 dt = \lim_{T \to \infty} \frac{2T}{2T} = 1 \text{ W}$
+
+**c) $x_3(t) = \cos(t)$**
+O sinal é periódico. Logo, $E_\infty = \infty$.
+A potência de uma senoide real de amplitude $A=1$ é $\frac{A^2}{2}$.
+$P_\infty = \frac{1}{2} \text{ W}$
+
+**d) $x_1[n] = (1/2)^n u[n]$**
+$E_\infty = \sum_{n=-\infty}^{\infty} |x_1[n]|^2 = \sum_{n=0}^{\infty} \left(\frac{1}{2}\right)^{2n} = \sum_{n=0}^{\infty} \left(\frac{1}{4}\right)^n$
+É uma progressão geométrica infinita com razão $1/4 < 1$.
+$E_\infty = \frac{1}{1 - 1/4} = \frac{1}{3/4} = \frac{4}{3} \text{ J}$
+Como $E_\infty$ é finita, $P_\infty = 0$.
+
+**e) $x_2[n] = e^{j(\pi/2 n + \pi/8)}$**
+A magnitude é $|x_2[n]| = 1$.
+$E_\infty = \sum_{n=-\infty}^{\infty} 1^2 = \infty$.
+$P_\infty = \lim_{N \to \infty} \frac{1}{2N+1} \sum_{n=-N}^{N} 1 = 1 \text{ W}$
+
+**f) $x_3[n] = \cos(\frac{\pi}{4} n)$**
+O sinal é periódico com amplitude 1. Portanto, $E_\infty = \infty$.
+Sendo discreto periódico, a potência é calculada sobre um período ($N_0 = 8$):
+$P_\infty = \frac{1}{8} \sum_{n=0}^{7} \cos^2(\frac{\pi}{4} n) = \frac{1}{2} \text{ W}$
+
+## Questão 16
+**[2.1 Couch, L. W.] For a sinusoidal waveform with a peak value of A and a frequency of $f_0$, use the time average operator to show that the RMS value for this waveform is $A/\sqrt{2}$**
+
+Seja a forma de onda $x(t) = A \cos(2\pi f_0 t + \theta)$. O valor RMS (Root Mean Square) é a raiz quadrada do valor médio quadrático:
+$$X_{RMS} = \sqrt{ \frac{1}{T_0} \int_{0}^{T_0} x^2(t) dt }$$
+Onde $T_0 = 1/f_0$.
+$$X_{RMS}^2 = \frac{1}{T_0} \int_{0}^{T_0} A^2 \cos^2(2\pi f_0 t + \theta) dt$$
+Usando a identidade trigonométrica $\cos^2(\alpha) = \frac{1}{2} + \frac{1}{2}\cos(2\alpha)$:
+$$X_{RMS}^2 = \frac{A^2}{T_0} \int_{0}^{T_0} \left[ \frac{1}{2} + \frac{1}{2}\cos(4\pi f_0 t + 2\theta) \right] dt$$
+A integral de um cosseno ao longo de dois períodos completos (a frequência foi dobrada) é zero. Portanto:
+$$X_{RMS}^2 = \frac{A^2}{T_0} \left( \frac{1}{2} T_0 \right) = \frac{A^2}{2}$$
+Logo, tirando a raiz quadrada:
+$$X_{RMS} = \frac{A}{\sqrt{2}}$$
+
+**[2.4 Couch, L. W.] The voltage across a 50-$\Omega$ resistive load is the positive portion of a cosine wave...**
+$v(t) = 10\cos(\omega_0 t)$ para $|t - nT_0| < T_0/4$ e zero no resto do tempo.
+A corrente é $i(t) = \frac{v(t)}{R} = \frac{v(t)}{50}$. O pico da tensão é $10\text{V}$ e o da corrente é $\frac{10}{50} = 0,2\text{A}$.
+
+**a) Sketch the voltage and current waveforms.**
+Tratam-se de formas de onda cossenoidais retificadas em meia-onda. Apresentam um lobo positivo durante a metade do ciclo (de $-T_0/4$ a $T_0/4$) e permanecem em zero durante o resto do ciclo ($T_0/4$ a $3T_0/4$). A corrente e a tensão têm a mesma forma (estão em fase devido à carga resistiva).
+
+**b) Evaluate the DC values for the voltage and current.**
+O valor DC é o valor médio em um período $[-T_0/2, T_0/2]$:
+$$V_{DC} = \frac{1}{T_0} \int_{-T_0/4}^{T_0/4} 10\cos\left(\frac{2\pi t}{T_0}\right) dt$$
+$$V_{DC} = \frac{10}{T_0} \left[ \frac{T_0}{2\pi} \sin\left(\frac{2\pi t}{T_0}\right) \right]_{-T_0/4}^{T_0/4} = \frac{5}{\pi} \left[ \sin(\pi/2) - \sin(-\pi/2) \right] = \frac{5}{\pi} [1 - (-1)] = \frac{10}{\pi} \approx 3,183 \text{ V}$$
+Para a corrente:
+$$I_{DC} = \frac{V_{DC}}{50} = \frac{10}{50\pi} = \frac{1}{5\pi} \approx 0,0637 \text{ A}$$
+
+**c) Find the RMS values for the voltage and current.**
+Para o valor RMS:
+$$V_{RMS}^2 = \frac{1}{T_0} \int_{-T_0/4}^{T_0/4} [10\cos(\omega_0 t)]^2 dt = \frac{100}{T_0} \int_{-T_0/4}^{T_0/4} \left( \frac{1}{2} + \frac{1}{2}\cos(2\omega_0 t) \right) dt$$
+A integral sobre meio período para o termo $\cos(2\omega_0 t)$ é nula (pois ele completa um ciclo completo em meio período original). Assim, resta apenas o componente contínuo:
+$$V_{RMS}^2 = \frac{100}{T_0} \left[ \frac{1}{2}t \right]_{-T_0/4}^{T_0/4} = \frac{100}{T_0} \left( \frac{1}{2} \cdot \frac{T_0}{2} \right) = \frac{100}{4} = 25$$
+Portanto, a tensão RMS é:
+$$V_{RMS} = \sqrt{25} = 5 \text{ V}$$
+E para a corrente RMS:
+$$I_{RMS} = \frac{V_{RMS}}{50} = \frac{5}{50} = 0,1 \text{ A}$$
+
+## Questão 17
+**[1.5 Haykin, S.] Considere o sinal senoidal $x(t) = A \cos(\omega t + \phi)$. Determine a potência média de $x(t)$.**
+Como demonstrado na questão 15, o valor RMS de uma senoide é $X_{RMS} = A/\sqrt{2}$. A potência média de um sinal, se considerarmos resistências unitárias ou sua definição fundamental em sinais $P_\infty = X_{RMS}^2$, é:
+$$P_\infty = \left(\frac{A}{\sqrt{2}}\right)^2 = \frac{A^2}{2}$$
+
+**[1.6 Haykin, S.] A frequência angular $\Omega$ do sinal senoidal $x[n] = A \cos(\Omega n + \phi)$ satisfaz a condição para que $x[n]$ seja periódico. Determine a potencia média de $x[n]$.**
+A potência média para o sinal discreto periódico é calculada sobre $N$ amostras (seu período fundamental):
+$$P = \frac{1}{N} \sum_{n=0}^{N-1} A^2 \cos^2(\Omega n + \phi)$$
+Como $\Omega$ cumpre a condição de periodicidade, a média do $\cos^2$ em um período discreto é também $\frac{1}{2}$.
+Portanto, a potência média discreta é $P = \frac{A^2}{2}$.
+
+## Questão 18
+**[1.8 Haykin, S.] O pulso trapezoidal $x(t)$ mostrado na figura P1.8... Determine a energia total de $x(t)$.**
+A energia total é dada pela integral de $|x(t)|^2$ sobre todo o domínio. Observando as funções de cada segmento:
+$$E = \int_{-5}^{-4} (t+5)^2 dt + \int_{-4}^{4} 1^2 dt + \int_{4}^{5} (5-t)^2 dt$$
+Vamos calcular as três integrais separadamente.
+
+1ª integral (Rampa de subida):
+$$\int_{-5}^{-4} (t+5)^2 dt$$
+Fazendo $u = t+5, du = dt$, os limites vão de $0$ a $1$:
+$$\int_{0}^{1} u^2 du = \left[ \frac{u^3}{3} \right]_0^1 = \frac{1}{3}$$
+
+2ª integral (Platô constante):
+$$\int_{-4}^{4} 1 dt = [t]_{-4}^4 = 4 - (-4) = 8$$
+
+3ª integral (Rampa de descida):
+$$\int_{4}^{5} (5-t)^2 dt$$
+Fazendo $u = 5-t, du = -dt$, limites de $1$ a $0$:
+$$-\int_{1}^{0} u^2 du = \int_{0}^{1} u^2 du = \frac{1}{3}$$
+
+Somando todas as partes:
+$$E = \frac{1}{3} + 8 + \frac{1}{3} = 8 + \frac{2}{3} = \frac{24+2}{3} = \frac{26}{3}$$
+A energia total de $x(t)$ é $26/3$ Joules.
+
+## Questão 21
+**[1.8 Oppenheim, A. V.] Expresse a parte real dos sinais a seguir na forma $Ae^{-at} \cos(\omega t + \phi)$ sendo $A, a, \omega$ e $\phi$ números reais com $A > 0$ e $-\pi < \phi \le \pi$.**
+
+**a) $x_1(t) = -2$**
+A parte real é simplesmente $-2$. Como $A > 0$, usamos uma fase $\phi = \pi$ para gerar o sinal negativo.
+$Re\{x_1(t)\} = 2 e^{0t} \cos(0t + \pi)$.
+*(Parâmetros: $A = 2, a = 0, \omega = 0, \phi = \pi$)*
+
+**b) $x_2(t) = \sqrt{2}e^{j\pi/4} \cos(3t + 2\pi)$**
+O cosseno com deslocamento $2\pi$ é igual ao cosseno sem deslocamento.
+$x_2(t) = \sqrt{2} (\cos(\pi/4) + j\sin(\pi/4)) \cos(3t)$.
+Como $\cos(\pi/4) = \frac{\sqrt{2}}{2}$:
+$Re\{x_2(t)\} = \sqrt{2} \left(\frac{\sqrt{2}}{2}\right) \cos(3t) = 1\cdot\cos(3t)$.
+*(Parâmetros: $A = 1, a = 0, \omega = 3, \phi = 0$)*
+
+**c) $x_3(t) = e^{-t} \sin(3t + \pi)$**
+Sabemos que $\sin(\theta + \pi) = -\sin(\theta)$.
+$x_3(t) = -e^{-t}\sin(3t)$.
+Para transformar em cosseno: $-\sin(\theta) = \cos(\theta + \pi/2)$.
+$Re\{x_3(t)\} = e^{-t} \cos(3t + \pi/2)$.
+*(Parâmetros: $A = 1, a = 1, \omega = 3, \phi = \pi/2$)*
+
+**d) $x_4(t) = j e^{(-2+j100)t}$**
+Podemos expressar $j = e^{j\pi/2}$.
+$x_4(t) = e^{j\pi/2} e^{-2t} e^{j100t} = e^{-2t} e^{j(100t + \pi/2)}$.
+Pela fórmula de Euler, a parte real é o cosseno do expoente imaginário:
+$Re\{x_4(t)\} = e^{-2t} \cos(100t + \pi/2)$.
+*(Parâmetros: $A = 1, a = 2, \omega = 100, \phi = \pi/2$)*
+
+## Questão 22
+**[1.12 Oppenheim, A. V.] Considere o sinal de tempo discreto $x[n] = 1 - \sum_{k=3}^{\infty}\delta[n - 1 - k]$. Determine os valores de inteiros $M$ e $n_0$ de modo que $x[n]$ possa ser expresso como $x[n] = u[Mn - n_0]$.**
+
+Avaliando o somatório: o impulso $\delta[n - 1 - k]$ é igual a 1 quando $n - 1 - k = 0 \implies k = n - 1$.
+Como a soma é avaliada para $k \ge 3$, o somatório será 1 para qualquer $n - 1 \ge 3 \implies n \ge 4$.
+Ou seja, a soma tem valor 1 para $n \ge 4$ e 0 para $n \le 3$.
+Subtraindo isso de 1, temos:
+$x[n] = 1 - 1 = 0$, para $n \ge 4$.
+$x[n] = 1 - 0 = 1$, para $n \le 3$.
+Isto corresponde à função degrau rebatida no tempo $u[-n + 3]$.
+Comparando com a forma $u[Mn - n_0]$:
+Temos $M = -1$ e $n_0 = -3$.
+
+**[1.13 Oppenheim, A. V.] Considere o sinal de tempo contínuo $x(t) = \delta(t + 2) - \delta(t - 2)$. Calcule o valor de $E_\infty$ para o sinal $y(t) = \int_{-\infty}^{t} x(\tau) d\tau$.**
+
+Calculando $y(t)$:
+$y(t) = \int_{-\infty}^{t} [\delta(\tau + 2) - \delta(\tau - 2)] d\tau$.
+A integral da função impulso é a função degrau $u(t)$. Logo:
+$y(t) = u(t + 2) - u(t - 2)$.
+Esta função define um pulso retangular de amplitude 1 que "liga" em $t = -2$ e "desliga" em $t = 2$.
+A energia do sinal $y(t)$ é a integral do quadrado:
+$E_\infty = \int_{-\infty}^{\infty} |y(t)|^2 dt = \int_{-2}^{2} 1^2 dt = [t]_{-2}^{2} = 2 - (-2) = 4 \text{ J}$.
+
+## Questão 23
+**Mostre que $\int_{-\infty}^{+\infty} x(t)\delta(t) dt = x(0)$**
+
+Esta é a propriedade de filtragem (ou amostragem) da função impulso de Dirac.
+A função $\delta(t)$ tem valor não-nulo apenas em $t = 0$. Assim, dentro de uma integral, o produto $x(t)\delta(t)$ é igual a $x(0)\delta(t)$, uma vez que para qualquer outro valor de $t \neq 0$, $\delta(t) = 0$ e o produto zera.
+Substituindo na integral:
+$$\int_{-\infty}^{+\infty} x(t)\delta(t) dt = \int_{-\infty}^{+\infty} x(0)\delta(t) dt$$
+Como $x(0)$ é uma constante em relação a $t$, podemos tirá-lo da integral:
+$$x(0) \int_{-\infty}^{+\infty} \delta(t) dt$$
+A área sob a função impulso unitário é definida rigorosamente como igual a 1.
+Portanto:
+$$x(0) \cdot 1 = x(0)$$
+
+## Questão 24
+**[1.32 Hsu, H. P.] Consider the RC circuit shown in Fig. 1-32. Find the relationship between the input $x(t)$ and the output $y(t)$.**
+
+Pela Lei das Malhas de Kirchhoff (KVL) no circuito fechado:
+$$v_s(t) = v_R(t) + v_c(t)$$
+Sabemos que a tensão no resistor é $v_R(t) = R i(t)$ e a corrente no capacitor (em série no circuito, é a mesma do resistor) é $i(t) = C \frac{dv_c(t)}{dt}$.
+
+**a) If $x(t) = v_s(t)$ and $y(t) = v_c(t)$**
+Substituindo a expressão da corrente na KVL:
+$$v_s(t) = R \left( C \frac{dv_c(t)}{dt} \right) + v_c(t)$$
+Sendo $x(t)$ a entrada e $y(t)$ a saída:
+$$x(t) = RC \frac{dy(t)}{dt} + y(t)$$
+*(Esta é uma EDO linear de primeira ordem que relaciona entrada e saída)*.
+
+**b) If $x(t) = v_s(t)$ and $y(t) = i(t)$**
+Neste caso, a saída é a corrente. A tensão no capacitor pode ser expressa em função da corrente pela integral:
+$$v_c(t) = \frac{1}{C} \int_{-\infty}^{t} i(\tau) d\tau$$
+Substituindo na equação da KVL:
+$$v_s(t) = R i(t) + \frac{1}{C} \int_{-\infty}^{t} i(\tau) d\tau$$
+Substituindo $x(t)$ e $y(t)$:
+$$x(t) = R y(t) + \frac{1}{C} \int_{-\infty}^{t} y(\tau) d\tau$$
+Diferenciando ambos os lados em relação a $t$, a equação diferencial torna-se:
+$$\frac{dx(t)}{dt} = R \frac{dy(t)}{dt} + \frac{1}{C} y(t)$$
+
+## Questão 25
+**[1.17 Oppenheim, A. V.] Considere um sistema de tempo contínuo com entrada $x(t)$ e saída $y(t)$ relacionado por $y(t) = x(\sin(t))$.**
+
+**a) O sistema é causal?**
+Não. Para um sistema ser causal, a saída $y(t_0)$ em qualquer instante $t_0$ só pode depender da entrada $x(t)$ para $t \le t_0$.
+Se avaliarmos o sistema em $t_0 = -\pi$:
+$$y(-\pi) = x(\sin(-\pi)) = x(0)$$
+Neste caso, a saída no instante $-\pi$ depende da entrada no instante $0$, o qual é um instante futuro em relação a $-\pi$. Portanto, não é causal.
+
+**b) O sistema é linear?**
+Sim. Verificando o princípio da superposição, para $x(t) = ax_1(t) + bx_2(t)$:
+$$y(t) = x(\sin(t)) = ax_1(\sin(t)) + bx_2(\sin(t)) = ay_1(t) + by_2(t)$$
+A linearidade é preservada.
+
+**[1.18 Oppenheim, A. V.] Considere um sistema de tempo discreto... $y[n] = \sum_{k=n-n_0}^{n+n_0} x[k]$**
+
+**a) O sistema é linear?**
+Sim. A operação de soma atende ao princípio da superposição e da homogeneidade. A soma ponderada de entradas resultará na soma ponderada das saídas.
+
+**b) O sistema é invariante no tempo?**
+Sim. Um atraso de $N$ na entrada $x[n]$ produz $x_1[n] = x[n-N]$.
+A saída correspondente é $y_1[n] = \sum_{k=n-n_0}^{n+n_0} x_1[k] = \sum_{k=n-n_0}^{n+n_0} x[k-N]$.
+Fazendo a mudança de variável $m = k-N$, os limites de soma passam a ser $n-N-n_0$ a $n-N+n_0$:
+$y_1[n] = \sum_{m=n-N-n_0}^{n-N+n_0} x[m]$.
+Isto é exatamente a definição de $y[n-N]$. Logo, um deslocamento na entrada causa um deslocamento idêntico na saída.
+
+**c) Sabendo que $x[n]$ é limitado... Expresse $C$ em termos de $B$ e $n_0$.**
+$$|y[n]| = \left| \sum_{k=n-n_0}^{n+n_0} x[k] \right| \le \sum_{k=n-n_0}^{n+n_0} |x[k]|$$
+Como $|x[k]| < B$, e a soma contém $(n+n_0) - (n-n_0) + 1 = 2n_0 + 1$ termos:
+$$|y[n]| < (2n_0 + 1)B$$
+A constante $C$ que limita a saída é $C = 2n_0 + 1$. O sistema é Bibo Estável.
+
+**[1.19 Oppenheim, A. V.] Determine se o sistema é linear, invariante no tempo ou ambos.**
+
+**a) $y(t) = t^2 x(t - 1)$**
+- **Linear**: Sim. A multiplicação por $t^2$ e o deslocamento linear preservam a superposição.
+- **Invariante no tempo**: Não. Um atraso $t_0$ na entrada produz $y_1(t) = t^2 x(t - 1 - t_0)$. Avaliando $y(t - t_0)$ temos $(t-t_0)^2 x(t - t_0 - 1)$. São diferentes, logo varia no tempo (devido ao coeficiente $t^2$).
+
+**b) $y[n] = x^2[n - 2]$**
+- **Linear**: Não. A operação quadrática na entrada destrói a linearidade (ex: $x[n] \to 2x[n]$ gera saída $4y[n]$ ao invés de $2y[n]$).
+- **Invariante no tempo**: Sim. Um atraso de $N$ na entrada afeta diretamente o argumento, gerando a mesma saída deslocada no tempo por $N$.
+
+**c) $y[n] = x[n + 1] - x[n - 1]$**
+- **Linear**: Sim. Operações de subtração e deslocamentos são estritamente lineares.
+- **Invariante no tempo**: Sim. Os coeficientes da equação de diferenças (1 e -1) são constantes no tempo, garantindo que $y_1[n] = y[n-N]$ para uma entrada deslocada $x[n-N]$.
+
+## Questão 26
+**[1.27 Oppenheim, A. V.] Determine quais dessas propriedades são válidas...**
+
+**a) $y(t) = x(t - 2) + x(2 - t)$**
+1. Sem memória: **Não** (depende de outros instantes como $t-2$).
+2. Invariante no tempo: **Não** (devido ao termo com $-t$, um atraso na entrada não se traduz num atraso simples na saída).
+3. Linear: **Sim**.
+4. Causal: **Não** (em $t=0$, $y(0) = x(-2) + x(2)$; logo, depende de uma entrada futura $x(2)$).
+5. Estável: **Sim** (se $x(t)$ for limitada, a soma de dois valores limitados será limitada).
+
+**b) $y(t) = [\cos(3t)]x(t)$**
+1. Sem memória: **Sim** (só depende de $x(t)$ no mesmo instante $t$).
+2. Invariante no tempo: **Não** (a modulação pelo cosseno depende explicitamente do tempo absoluto $t$).
+3. Linear: **Sim** (multiplicar a entrada por uma constante ou outra função preserva a superposição).
+4. Causal: **Sim** (todo sistema sem memória é, por definição, causal).
+5. Estável: **Sim** (o cosseno é limitado entre -1 e 1; logo, se a entrada for finita, a saída o será).
+
+**c) $y(t) = \int_{-\infty}^{2t} x(\tau) d\tau$**
+1. Sem memória: **Não** (é uma integral dependente do passado/futuro).
+2. Invariante no tempo: **Não** (o fator $2t$ no limite introduz dependência e compressão temporal).
+3. Linear: **Sim** (A integral é um operador linear).
+4. Causal: **Não** (para $t=1$, a saída depende da integral até $2$, ou seja, um instante futuro no tempo da entrada).
+5. Estável: **Não** (a integral de uma entrada constante e limitada diverge, ex: degrau produz uma rampa infinita).
+
+**d) $y(t) = \begin{cases} 0, & t < 0 \\ x(t) + x(t-2), & t \ge 0 \end{cases}$**
+1. Sem memória: **Não**.
+2. Invariante no tempo: **Não** (a resposta do sistema muda abruptamente a depender se estamos antes ou depois de $t=0$).
+3. Linear: **Sim**.
+4. Causal: **Sim** (para $t \ge 0$, a saída depende de $t$ e $t-2$, o presente e o passado. Em $t<0$ vale 0. Nunca depende de instante $> t$).
+5. Estável: **Sim**.
+
+**e) $y(t) = \begin{cases} 0, & x(t) < 0 \\ x(t) + x(t-2), & x(t) \ge 0 \end{cases}$**
+1. Sem memória: **Não**.
+2. Invariante no tempo: **Sim** (a condição é baseada na amplitude do sinal em relação a si mesmo, independente de qual relógio local está rodando).
+3. Linear: **Não** (se invertermos o sinal de $x(t)$, ou seja, multiplicar por constante negativa, ele zera, violando o princípio da homogeneidade).
+4. Causal: **Sim**.
+5. Estável: **Sim**.
+
+**f) $y(t) = x(t/3)$**
+1. Sem memória: **Não**.
+2. Invariante no tempo: **Não** (é uma operação de expansão no tempo).
+3. Linear: **Sim**.
+4. Causal: **Não** (para $t = -3$, $y(-3) = x(-1)$. O instante de entrada dependido ($-1$) está à frente (futuro) do instante de saída ($-3$)).
+5. Estável: **Sim**.
+
+**g) $y(t) = \frac{dx(t)}{dt}$**
+1. Sem memória: **Não** (o limite da derivada demanda a vizinhança do ponto temporal, $t$ e $t-\Delta t$).
+2. Invariante no tempo: **Sim** (A derivada comuta perfeitamente com um deslocamento de tempo).
+3. Linear: **Sim** (o operador derivada é inerentemente linear).
+4. Causal: **Sim** (a depender do método numérico/analítico de definição, é geralmente associada apenas a instantes presente/passado usando diferenças regressivas. Matematicamente restrito pode depender do futuro próximo pela diferença progressiva, mas usualmente considerado causal como a resposta ao impulso $h(t) = \delta'(t)$ cujo suporte é a origem).
+5. Estável: **Não** (sinais limitados como uma onda quadrada ou função degrau produzem impulsos de amplitude infinita em suas transições abruptas, rompendo o critério de BIBO estabilidade).
+
+## Questão 27
+**[1.34 Hsu, H. P.] Consider the system shown in Fig. 1-35. Determine whether it is (a) memoryless, (b) causal, (c) linear, (d) time-invariant, or (e) stable.**
+
+Da Figura 1-35, a relação entrada-saída é uma modulação (multiplicação por uma portadora):
+$y(t) = x(t) \cos(\omega_c t)$
+
+- **a) Memoryless (Sem memória)**: **Sim**. O valor de $y(t)$ em um determinado instante $t$ depende unicamente de $x(t)$ no mesmo instante.
+- **b) Causal**: **Sim**. Todo sistema sem memória é causal.
+- **c) Linear**: **Sim**. $ay_1(t) + by_2(t) = a [x_1(t)\cos(\omega_c t)] + b [x_2(t)\cos(\omega_c t)] = [a x_1(t) + b x_2(t)] \cos(\omega_c t)$, o que prova a linearidade.
+- **d) Time-invariant (Invariante no tempo)**: **Não**. A função cosseno é variável no tempo absoluto. Um atraso na entrada produziria $x(t-t_0)\cos(\omega_c t)$ que é diferente de deslocar a saída inteira: $x(t-t_0)\cos(\omega_c(t-t_0))$.
+- **e) Stable (Estável)**: **Sim**. A função cosseno varia entre -1 e 1. Se a entrada é limitada a um valor $B$, a saída será rigorosamente limitada a $1 \cdot B$, sendo portanto BIBO estável.
+
+## Questão 28
+**[1.37 Hsu, H. P.] Find the input-output relation of the feedback system shown in Fig. 1-37.**
+
+Analisando o diagrama de blocos de tempo discreto:
+1. O sinal de entrada $x[n]$ entra em um somador ($\Sigma$).
+2. A outra entrada desse somador é o sinal de feedback que vem diretamente da linha de saída $y[n]$.
+3. O resultado da soma é, portanto, $x[n] + y[n]$.
+4. Esta soma passa por um bloco de "Unit delay" (atraso unitário, $z^{-1}$), e o sinal resultante na saída deste bloco é precisamente o $y[n]$.
+
+Portanto, a equação de diferenças que descreve a relação é:
+$$y[n] = \text{Atraso}(x[n] + y[n])$$
+$$y[n] = x[n-1] + y[n-1]$$
+*(Ou equivalentemente: $y[n+1] - y[n] = x[n]$)*.
+
+## Questão 29
+**[1.12 Haykin, S.] Os sistemas dados a seguir têm a entrada $x(t)$ ou $x[n]$ e saída $y(t)$ ou $y[n]$, respectivamente. Determine se cada um deles é (i) sem memória, (ii) estável, (iii) causal, (iv) linear e (v) invariante no tempo.**
+
+**a) $y(t) = \cos(x(t))$**
+- (i) Sem memória: **Sim**.
+- (ii) Estável: **Sim** ($|y(t)| \le 1$ para todo $t$, independentemente se $x(t)$ explode).
+- (iii) Causal: **Sim**.
+- (iv) Linear: **Não** (A função cosseno não é linear, $\cos(x_1 + x_2) \neq \cos(x_1) + \cos(x_2)$).
+- (v) Invariante no tempo: **Sim** (Não há dependência explícita do tempo).
+
+**b) $y[n] = 2x[n]u[n]$**
+- (i) Sem memória: **Sim**.
+- (ii) Estável: **Sim** (Se $x[n]$ é limitada a $B$, a saída no máximo será $2B$).
+- (iii) Causal: **Sim**.
+- (iv) Linear: **Sim** (A multiplicação por funções preestabelecidas preserva a superposição).
+- (v) Invariante no tempo: **Não** (A função degrau $u[n]$ aplica-se como uma "janela" fixa a partir de $n=0$; atrasar $x[n]$ não atrasa o degrau associado na definição do sistema).
+
+**c) $y[n] = \log_{10}(|x[n]|)$**
+- (i) Sem memória: **Sim**.
+- (ii) Estável: **Não** (Se a entrada for $x[n] = 0$, a saída será ilimitada $-\infty$).
+- (iii) Causal: **Sim**.
+- (iv) Linear: **Não** (Os logaritmos não obedecem à homogeneidade nem à aditividade).
+- (v) Invariante no tempo: **Sim**.
+
+**d) $y(t) = \int_{-\infty}^{t/2} x(\tau) d\tau$**
+- (i) Sem memória: **Não**.
+- (ii) Estável: **Não** (A integral de uma constante vai para o infinito).
+- (iii) Causal: **Não** (Observe $t = -2$. A saída é baseada na integral até $-2/2 = -1$. O tempo $-1$ está "à frente" do tempo $-2$, sendo assim um tempo futuro em relação ao momento que estamos analisando. Isso torna o sistema não causal em instantes negativos).
+- (iv) Linear: **Sim**.
+- (v) Invariante no tempo: **Não** (A compressão no limite superior destrói a invariância).
+
+**e) $y[n] = \sum_{k=-\infty}^{n} x[k + 2]$**
+Fazendo mudança no índice do somatório: $m = k+2 \implies y[n] = \sum_{m=-\infty}^{n+2} x[m]$.
+- (i) Sem memória: **Não**.
+- (ii) Estável: **Não** (soma cumulativa de sinal contínuo).
+- (iii) Causal: **Não** (A saída no instante $n$ avalia a soma de dados da entrada até $n+2$, instantes futuros).
+- (iv) Linear: **Sim**.
+- (v) Invariante no tempo: **Sim** (Os limites da soma correm junto com qualquer deslocamento $n-N$).
+
+**f) $y(t) = \frac{d}{dt}x(t)$**
+- (i) Sem memória: **Não** (a derivada depende de instantes infinitamente próximos vizinhos).
+- (ii) Estável: **Não** (a derivada de um degrau, que é limitado, resulta em um impulso, que é ilimitado).
+- (iii) Causal: **Sim** (assumindo a definição do sistema LTI cuja resposta ao impulso é $\delta'(t)$ com suporte em $t \ge 0$, ou calculada por diferença regressiva).
+- (iv) Linear: **Sim** (o operador de derivação é linear).
+- (v) Invariante no tempo: **Sim**.
+
+**g) $y[n] = \cos(2\pi x[n+1]) + x[n]$**
+- (i) Sem memória: **Não** (depende de um instante futuro $n+1$).
+- (ii) Estável: **Sim** (se $x[n]$ for limitado, a soma de um cosseno que é limitado a 1 com $x[n]$ também será limitada).
+- (iii) Causal: **Não** (depende de $x[n+1]$).
+- (iv) Linear: **Não** (devido ao cosseno aplicado ao sinal).
+- (v) Invariante no tempo: **Sim**.
+
+**h) $y(t) = \frac{d}{dt}\{e^{-t}x(t)\}$**
+- (i) Sem memória: **Não** (possui derivada).
+- (ii) Estável: **Não** (assim como na letra f, a derivada pode gerar valores infinitos).
+- (iii) Causal: **Sim**.
+- (iv) Linear: **Sim** (multiplicar por $e^{-t}$ e derivar são operações lineares).
+- (v) Invariante no tempo: **Não** (o fator explícito $e^{-t}$ varia com o tempo).
+
+**i) $y(t) = x(2-t)$**
+- (i) Sem memória: **Não** (para $t=0$, $y(0)=x(2)$).
+- (ii) Estável: **Sim** (apenas reflete e desloca o sinal no tempo, preservando a amplitude).
+- (iii) Causal: **Não** (como visto acima, $y(0)$ depende do futuro $x(2)$).
+- (iv) Linear: **Sim**.
+- (v) Invariante no tempo: **Não** (devido ao rebatimento no tempo $-t$).
+
+**j) $y[n] = x[n] \sum_{k=-\infty}^{\infty} \delta[n-2k]$**
+- (i) Sem memória: **Sim** (a saída no instante $n$ só depende da entrada no instante $n$).
+- (ii) Estável: **Sim** (o somatório vale 0 ou 1, então $|y[n]| \le |x[n]|$, limitando a saída se a entrada for limitada).
+- (iii) Causal: **Sim** (todo sistema sem memória é causal).
+- (iv) Linear: **Sim**.
+- (v) Invariante no tempo: **Não** (o somatório age como um 'relógio' que liga e desliga dependendo de $n$ ser par ou ímpar).
+
+**k) $y(t) = x(t/2)$**
+- (i) Sem memória: **Não**.
+- (ii) Estável: **Sim**.
+- (iii) Causal: **Não** (para $t=-2$, $y(-2) = x(-1)$, um valor no futuro).
+- (iv) Linear: **Sim**.
+- (v) Invariante no tempo: **Não** (expansão no eixo do tempo).
+
+**l) $y[n] = 2x[2^n]$**
+- (i) Sem memória: **Não** (para $n=2$, $y[2] = 2x[4]$).
+- (ii) Estável: **Sim** (apenas escala a amplitude em 2 e avalia em outros índices).
+- (iii) Causal: **Não** (depende de $x[2^n]$, que é futuro para $n>1$).
+- (iv) Linear: **Sim**.
+- (v) Invariante no tempo: **Não** (compressão exponencial do tempo).
+
+
+## Questão 30
+**[1.12 Haykin, S.] Um sistema de tempo discreto é tanto linear como invariante no tempo. Suponha que a saída devido a uma entrada $x[n] = \delta[n]$ seja dada na Figura P1.41(a).**
+A saída para a entrada $\delta[n]$ é a resposta ao impulso $h[n]$ do sistema LTI. Analisando a Figura P1.41(a), obtemos:
+$h[n] = \delta[n-1] - \delta[n-2]$
+(ou seja, $h[1]=1$, $h[2]=-1$ e 0 para os demais).
+
+**a) Encontre a saída devido a uma entrada $x[n] = \delta[n-1]$.**
+Como o sistema é Invariante no Tempo (LTI), a saída para uma entrada deslocada é a resposta ao impulso deslocada da mesma forma:
+$$y[n] = h[n-1] = \delta[(n-1)-1] - \delta[(n-1)-2] = \delta[n-2] - \delta[n-3]$$
+
+**b) Encontre a saída devido a uma entrada $x[n] = 2\delta[n] - \delta[n-2]$.**
+Pela linearidade e invariância no tempo, a saída é uma combinação linear das respostas ao impulso:
+$$y[n] = 2h[n] - h[n-2]$$
+$$y[n] = 2(\delta[n-1] - \delta[n-2]) - (\delta[n-3] - \delta[n-4])$$
+$$y[n] = 2\delta[n-1] - 2\delta[n-2] - \delta[n-3] + \delta[n-4]$$
+
+**c) Encontre a saída devido à entrada descrita na Figura P1.41(b).**
+Analisando a Figura P1.41(b), a entrada $x[n]$ possui um impulso de amplitude 2 em $n=0$ e um de amplitude -1 em $n=1$. Portanto:
+$x[n] = 2\delta[n] - \delta[n-1]$
+A saída do sistema LTI será a convolução $y[n] = x[n] * h[n]$:
+$$y[n] = 2h[n] - h[n-1]$$
+$$y[n] = 2(\delta[n-1] - \delta[n-2]) - (\delta[n-2] - \delta[n-3])$$
+$$y[n] = 2\delta[n-1] - 3\delta[n-2] + \delta[n-3]$$
