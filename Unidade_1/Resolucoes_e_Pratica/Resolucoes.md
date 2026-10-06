@@ -1,5 +1,8 @@
 # Resoluções da Lista de Sinais
 
+---
+# 📚 BLOCO 1: Conceitos Fundamentais de Sinais e Sistemas
+
 ## Questão 1
 **Defina o que é um sinal e o que é um sistema.**
 
@@ -71,6 +74,9 @@ Para aplicar o poder da computação e a inteligência dos processadores no mund
 *(Questão reservada para discussão de material em sala de aula, de acordo com as especificidades do professor).*
 
 
+---
+# 📚 BLOCO 2: Sinais Pares e Ímpares
+
 ## Questão 9
 **[1.7 Hsu, H. P.] Show that the product of two even signals or of two odd signals is an even signal and that the product of an even and an odd signal is an odd signal.**
 
@@ -126,6 +132,9 @@ Para o somatório:
 $$\sum_{n=-k}^{k} x[n] = \sum_{n=-k}^{-1} x[n] + x[0] + \sum_{n=1}^{k} x[n]$$
 Como demonstrado acima, $x[0]=0$ e $\sum_{n=-k}^{-1} x[n] = \sum_{n=1}^{k} x[-n] = \sum_{n=1}^{k} -x[n]$. Logo:
 $$\sum_{n=-k}^{k} x[n] = -\sum_{n=1}^{k} x[n] + 0 + \sum_{n=1}^{k} x[n] = 0$$
+
+---
+# 📚 BLOCO 3: Periodicidade de Sinais
 
 ## Questão 11
 **[1.34 Oppenheim, A. V.] Neste problema, exploramos diversas propriedades dos sinais pares e ímpares.**
@@ -212,6 +221,9 @@ Não. Um sistema é invertível se, e somente se, entradas distintas produzirem 
 Como vimos no item (b), a entrada $x_1[n] = A\delta[n]$ produz a saída $y_1[n] = 0$. 
 Se aplicarmos a entrada nula $x_2[n] = 0$, a saída também será $y_2[n] = 0$.
 Como entradas diferentes produziram a mesma saída, o sistema não é invertível.
+
+---
+# 📚 BLOCO 4: Energia, Potência e Transformações Numéricas
 
 ## Questão 14
 **[1.3 Haykin, S.] O sinal senoidal $x(t) = 3 \cos(200t + \pi/6)$ é passado através de um dispositivo de lei quadrática definido pela relação $y(t) = x^2(t)$. Mostre que a saída $y(t)$ consiste em um componente dc e em um componente senoidal.**
@@ -336,6 +348,9 @@ Somando todas as partes:
 $$E = \frac{1}{3} + 8 + \frac{1}{3} = 8 + \frac{2}{3} = \frac{24+2}{3} = \frac{26}{3}$$
 A energia total de $x(t)$ é $26/3$ Joules.
 
+---
+# 📚 BLOCO 6: Funções Singulares (Degrau e Impulso Unitário)
+
 ## Questão 21
 **[1.8 Oppenheim, A. V.] Expresse a parte real dos sinais a seguir na forma $Ae^{-at} \cos(\omega t + \phi)$ sendo $A, a, \omega$ e $\phi$ números reais com $A > 0$ e $-\pi < \phi \le \pi$.**
 
@@ -400,6 +415,9 @@ $$x(0) \int_{-\infty}^{+\infty} \delta(t) dt$$
 A área sob a função impulso unitário é definida rigorosamente como igual a 1.
 Portanto:
 $$x(0) \cdot 1 = x(0)$$
+
+---
+# 📚 BLOCO 7: Classificação e Propriedades dos Sistemas (Memória, Causalidade, Linearidade, Invariância, Estabilidade)
 
 ## Questão 24
 **[1.32 Hsu, H. P.] Consider the RC circuit shown in Fig. 1-32. Find the relationship between the input $x(t)$ and the output $y(t)$.**
@@ -637,6 +655,9 @@ Fazendo mudança no índice do somatório: $m = k+2 \implies y[n] = \sum_{m=-\in
 - (iv) Linear: **Sim**.
 - (v) Invariante no tempo: **Não** (compressão exponencial do tempo).
 
+
+---
+# 📚 BLOCO 8: Resposta de Sistemas LTI e Convolução Discreta
 
 ## Questão 30
 **[1.12 Haykin, S.] Um sistema de tempo discreto é tanto linear como invariante no tempo. Suponha que a saída devido a uma entrada $x[n] = \delta[n]$ seja dada na Figura P1.41(a).**
