@@ -1,0 +1,143 @@
+# Lista de Treino - Nível Fácil (15 Questões)
+**Disciplina:** Sinais e Sistemas (TEC 412)
+**Tópicos:** Paridade, Energia/Potência, Memória, Causalidade, Linearidade, Invariância e Estabilidade.
+
+---
+
+## Tópico 1: Sinais Pares e Ímpares
+
+**Questão 1:** Dado o polinômio $x(t) = 1 + t + t^2 + t^3$, determine analiticamente a sua parte par $x_p(t)$ e sua parte ímpar $x_i(t)$.
+> **Resolução:**
+> Parte Par: $x_p(t) = \frac{x(t) + x(-t)}{2}$
+> $x_p(t) = \frac{(1 + t + t^2 + t^3) + (1 + (-t) + (-t)^2 + (-t)^3)}{2}$
+> $x_p(t) = \frac{1 + t + t^2 + t^3 + 1 - t + t^2 - t^3}{2}$
+> $x_p(t) = \frac{2 + 2t^2}{2} = 1 + t^2$.
+> Parte Ímpar: $x_i(t) = \frac{x(t) - x(-t)}{2}$
+> $x_i(t) = \frac{(1 + t + t^2 + t^3) - (1 - t + t^2 - t^3)}{2}$
+> $x_i(t) = \frac{2t + 2t^3}{2} = t + t^3$.
+
+**Questão 2:** Analise graficamente e comprove algebricamente se o sinal retangular que vai de $t=-2$ até $t=2$ com amplitude constante $1$ é par ou ímpar. $x(t) = u(t+2) - u(t-2)$.
+> **Resolução:**
+> Um sinal contínuo igual a 1 de $-2$ a $2$ apresenta simetria perfeita em relação ao eixo vertical $Y$.
+> Comprovando algebricamente:
+> $x(-t) = u(-t+2) - u(-t-2)$.
+> Como a função retangular é estritamente simétrica em torno do zero, inverter o tempo não muda os seus limites físicos no espaço. A amplitude em $t=1$ é $1$, e em $t=-1$ também é $1$. Logo, $x(-t) = x(t)$.
+> **Gabarito: Sinal Par.**
+
+---
+
+## Tópico 2: Energia e Potência
+
+**Questão 3:** Calcule a energia total do pulso retangular $x(t) = 3$ definido apenas no intervalo $0 \le t \le 4$, sendo zero no resto do tempo.
+> **Resolução:**
+> $E = \int_{-\infty}^{\infty} |x(t)|^2 dt = \int_{0}^{4} (3)^2 dt$
+> $E = \int_{0}^{4} 9 dt = [9t]_0^4 = 9(4) - 9(0) = 36 \text{ Joules}$.
+> **Gabarito: Energia = 36 Joules. Como é finita, é um sinal de Energia.**
+
+**Questão 4:** O sinal contínuo constante $x(t) = 5$ estendido de $-\infty$ a $\infty$ é um sinal de energia ou potência? Determine o valor.
+> **Resolução:**
+> A integral de energia de uma constante ao longo do tempo infinito será infinita. Portanto, testamos a potência.
+> $P = \lim_{T \to \infty} \frac{1}{2T} \int_{-T}^{T} (5)^2 dt = \lim_{T \to \infty} \frac{1}{2T} \int_{-T}^{T} 25 dt$
+> $P = \lim_{T \to \infty} \frac{1}{2T} [25t]_{-T}^{T} = \lim_{T \to \infty} \frac{1}{2T} (25T - (-25T)) = \lim_{T \to \infty} \frac{50T}{2T} = 25$.
+> **Gabarito: Sinal de Potência, P = 25 Watts.**
+
+---
+
+## Tópico 3: Memória
+
+**Questão 5:** O sistema $y(t) = 4x(t) + 2$ possui memória?
+> **Resolução:**
+> Avaliando num instante $t_0$, temos $y(t_0) = 4x(t_0) + 2$. A saída exige unicamente a entrada no mesmo instante $t_0$. Não há integrais, derivadas ou deslocamentos.
+> **Gabarito: Sistema SEM Memória (Estático).**
+
+**Questão 6:** O sistema contínuo $y(t) = x(t^2)$ possui memória?
+> **Resolução:**
+> Vamos testar um instante de tempo. Por exemplo, em $t = 2$:
+> $y(2) = x(2^2) = x(4)$.
+> Para gerar a saída no segundo 2, o sistema exige saber o valor do sinal no segundo 4. Como precisou ler um instante diferente do momento atual, necessita de armazenamento.
+> **Gabarito: Sistema COM Memória.**
+
+---
+
+## Tópico 4: Causalidade
+
+**Questão 7:** O sistema $y(t) = x(t-5)$ é causal?
+> **Resolução:**
+> A saída num instante $t_0$ é $y(t_0) = x(t_0 - 5)$.
+> Como $t_0 - 5$ é um valor de tempo SEMPRE anterior a $t_0$, o sistema só depende de informações que já ocorreram (passado).
+> **Gabarito: Sistema Causal.**
+
+**Questão 8:** O sistema de tempo discreto $y[n] = x[n+1] + x[n]$ respeita a causalidade física?
+> **Resolução:**
+> Para $n=0$: $y[0] = x[1] + x[0]$.
+> O sistema precisa ler a amostra $x[1]$ para gerar a saída atual no instante 0. Como $x[1]$ está no futuro em relação ao tempo presente $n=0$, isso não é viável em tempo real.
+> **Gabarito: Sistema NÃO-Causal.**
+
+---
+
+## Tópico 5: Linearidade
+
+**Questão 9:** Prove analiticamente se o sistema amplificador $y(t) = 5x(t)$ é linear.
+> **Resolução:**
+> Entrada combinada: $x_3(t) = ax_1(t) + bx_2(t)$.
+> Saída resultante: $y_3(t) = 5(ax_1(t) + bx_2(t)) = 5ax_1(t) + 5bx_2(t)$.
+> Rearranjando: $y_3(t) = a(5x_1(t)) + b(5x_2(t)) = a \cdot y_1(t) + b \cdot y_2(t)$.
+> A igualdade se manteve perfeita.
+> **Gabarito: Sistema Linear.**
+
+**Questão 10:** O sistema $y(t) = x(t) + 1$ é linear?
+> **Resolução:**
+> Um requisito básico da linearidade (homogeneidade) é a propriedade da aditividade na origem: $x(t) = 0 \implies y(t) = 0$.
+> Inserindo uma entrada nula: $y(t) = 0 + 1 = 1$.
+> Como a saída para o repouso não foi nula, a propriedade de superposição fatalmente falhará.
+> **Gabarito: Sistema NÃO-Linear.**
+
+---
+
+## Tópico 6: Invariância no Tempo
+
+**Questão 11:** O atenuador ideal $y(t) = \frac{1}{2}x(t)$ é invariante no tempo?
+> **Resolução:**
+> Passo 1 (atrasa entrada): $y_1(t) = \frac{1}{2}x(t-t_0)$.
+> Passo 2 (atrasa variável global): A única variável global está no argumento do $x$. Logo, $y_2(t) = \frac{1}{2}x(t-t_0)$.
+> Como $y_1(t) = y_2(t)$, o sistema não muda suas características com o passar do relógio.
+> **Gabarito: Sistema Invariante no Tempo.**
+
+**Questão 12:** O sistema oscilador $y(t) = x(t) \cdot \cos(3t)$ é invariante?
+> **Resolução:**
+> Atrasando a entrada: $y_1(t) = x(t-t_0) \cdot \cos(3t)$.
+> Atrasando a referência temporal do sistema: substituímos $t$ por $t-t_0$:
+> $y_2(t) = x(t-t_0) \cdot \cos(3(t-t_0))$.
+> Vemos claramente que $y_1 \neq y_2$ porque a fase do cosseno mudou no segundo caso.
+> **Gabarito: Sistema Variante no Tempo.**
+
+---
+
+## Tópico 7: Estabilidade BIBO
+
+**Questão 13:** O sistema trigonométrico $y(t) = \cos(x(t))$ é BIBO estável?
+> **Resolução:**
+> Assuma entrada limitada $|x(t)| \le B_x$.
+> O sinal $y(t)$ é o cosseno de alguma coisa. Sabemos que a função cosseno, matematicamente, sempre retorna valores restritos entre $-1$ e $+1$, independentemente do tamanho do ângulo interno.
+> Portanto, a amplitude da saída $|y(t)| \le 1$.
+> Como 1 é sempre um número finito, o sistema jamais explodirá.
+> **Gabarito: Sistema Estável.**
+
+**Questão 14:** O sistema de rampa inversa $y(t) = \frac{x(t)}{t}$ (com $t \ge 0$) é estável?
+> **Resolução:**
+> Vamos testar uma entrada constante e limitada, por exemplo $x(t) = 1$ (degrau).
+> A saída seria $y(t) = \frac{1}{t}$.
+> Quando avaliamos o sistema nas vizinhanças de $t=0$, o limite de $\frac{1}{t}$ para $t \to 0$ vai para o infinito ($\infty$).
+> Tivemos uma entrada que nunca passou de 1, mas a saída explodiu em $t=0$.
+> **Gabarito: Sistema Instável.**
+
+---
+
+## Tópico 8: Mistura de Conceitos (Sistemas Completos)
+
+**Questão 15:** Dado o sistema de tempo discreto $y[n] = n \cdot x[n]$. Classifique-o quanto a Memória, Causalidade, Linearidade e Invariância.
+> **Resolução e Gabarito:**
+> 1. **Memória:** Para o instante $n$, só pede $x[n]$. Logo, **Sem Memória**.
+> 2. **Causalidade:** Como é sem memória (só pede o presente), é automaticamente **Causal**.
+> 3. **Linearidade:** $y_3[n] = n \cdot (ax_1[n] + bx_2[n]) = a(n \cdot x_1[n]) + b(n \cdot x_2[n]) = a \cdot y_1[n] + b \cdot y_2[n]$. **Linear**.
+> 4. **Invariância:** Atrasando a entrada: $y_1[n] = n \cdot x[n-n_0]$. Atrasando o sistema geral: $y_2[n] = (n-n_0) \cdot x[n-n_0]$. Não são iguais. Logo, é **Variante no Tempo**.
