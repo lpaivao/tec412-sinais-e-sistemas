@@ -6,7 +6,7 @@
 ## Questão 1
 **Defina o que é um sinal e o que é um sistema.**
 
-- **Sinal**: Matematicamente, um sinal é uma função de uma ou mais variáveis independentes que transporta informações acerca do comportamento, estado ou natureza de algum fenômeno físico (segundo Haykin e Oppenheim). A variável independente mais comum em sistemas de engenharia é o tempo ($t$ para contínuos, $n$ para discretos), mas pode também ser o espaço (como em imagens bidimensionais). Formalmente, um sinal unidimensional pode ser visto como um mapeamento $x: \mathbb{R} 	o \mathbb{R}$ ou $x: \mathbb{R} 	o \mathbb{C}$. Exemplos incluem o registro de um eletrocardiograma (ECG), a tensão variável $v(t)$ nos terminais de um componente, ou as ondas sonoras se propagando em um meio.
+- **Sinal**: Matematicamente, um sinal é uma função de uma ou mais variáveis independentes que transporta informações acerca do comportamento, estado ou natureza de algum fenômeno físico (segundo Haykin e Oppenheim). A variável independente mais comum em sistemas de engenharia é o tempo ($t$ para contínuos, $n$ para discretos), mas pode também ser o espaço (como em imagens bidimensionais). Formalmente, um sinal unidimensional pode ser visto como um mapeamento $x: \mathbb{R} \to \mathbb{R}$ ou $x: \mathbb{R} \to \mathbb{C}$. Exemplos incluem o registro de um eletrocardiograma (ECG), a tensão variável $v(t)$ nos terminais de um componente, ou as ondas sonoras se propagando em um meio.
 - **Sistema**: É uma interconexão de componentes, dispositivos ou algoritmos – seja de natureza física ou puramente matemática – que processa ou transforma um sinal de entrada (sinal de excitação, $x(t)$) para produzir um sinal de saída (sinal de resposta, $y(t)$). Pode ser representado por um operador de transformação matemática $\mathcal{H}$, tal que $y(t) = \mathcal{H}\{x(t)\}$. O objetivo de um sistema é extrair informações, eliminar ruídos ou controlar a dinâmica do sinal original.
 
 ## Questão 2
@@ -133,14 +133,11 @@ $$\sum_{n=-k}^{k} x[n] = \sum_{n=-k}^{-1} x[n] + x[0] + \sum_{n=1}^{k} x[n]$$
 Como demonstrado acima, $x[0]=0$ e $\sum_{n=-k}^{-1} x[n] = \sum_{n=1}^{k} x[-n] = \sum_{n=1}^{k} -x[n]$. Logo:
 $$\sum_{n=-k}^{k} x[n] = -\sum_{n=1}^{k} x[n] + 0 + \sum_{n=1}^{k} x[n] = 0$$
 
----
-# 📚 BLOCO 3: Periodicidade de Sinais
-
 ## Questão 11
 **[1.34 Oppenheim, A. V.] Neste problema, exploramos diversas propriedades dos sinais pares e ímpares.**
 
 **a) Mostre que se $x[n]$ é um sinal ímpar, então $\sum_{n=-\infty}^{\infty} x[n] = 0$**
-Essa afirmação é uma extensão direta da prova da Questão 9b para $k \to \infty$. Desmembrando o somatório:
+Essa afirmação é uma extensão direta da prova da Questão 10b para $k \to \infty$. Desmembrando o somatório:
 $$\sum_{n=-\infty}^{\infty} x[n] = \sum_{n=-\infty}^{-1} x[n] + x[0] + \sum_{n=1}^{\infty} x[n]$$
 Como $x[n]$ é ímpar, temos $x[0] = 0$ e $x[-n] = -x[n]$. Mudando o índice da primeira parcela para $m = -n$:
 $$\sum_{n=-\infty}^{\infty} x[n] = \sum_{m=1}^{\infty} x[-m] + 0 + \sum_{n=1}^{\infty} x[n] = \sum_{m=1}^{\infty} -x[m] + \sum_{n=1}^{\infty} x[n] = 0$$
@@ -151,6 +148,9 @@ $$y[-n] = x_1[-n]x_2[-n]$$
 Sabendo que $x_1$ é ímpar ($x_1[-n] = -x_1[n]$) e $x_2$ é par ($x_2[-n] = x_2[n]$):
 $$y[-n] = (-x_1[n])(x_2[n]) = - (x_1[n]x_2[n]) = -y[n]$$
 Portanto, o produto de um sinal ímpar e um sinal par resulta em um sinal **ímpar**.
+
+---
+# 📚 BLOCO 3: Periodicidade de Sinais
 
 ## Questão 12
 **[1.2 Haykin, S.] Determine se os seguintes sinais são periódicos. Se forem periódicos, encontre o período fundamental.**
@@ -184,12 +184,14 @@ Observamos que a paridade de $n^2$ é idêntica à de $n$. Portanto, $x[n] = (-1
 **Resposta**: Sim, periódico com $N_0 = 2$.
 
 **f) $x[n]$ descrito na figura P1.2f**
-A figura mostra um padrão de impulsos que se repetem (grupos de 3 impulsos). Analisando os índices do gráfico, o padrão centraliza-se em deslocamentos regulares. Sendo um trem de impulsos infinito e repetitivo com espaçamento regular entre os grupos de mesmo formato. Pela inspeção visual dos eixos, o período de repetição do grupo é de $N_0 = 5$ amostras.
-**Resposta**: Sim, periódico com $N_0 = 5$.
+A figura mostra grupos de 3 impulsos e grupos de 2 impulsos, alternados e separados por zeros. Lendo os índices do gráfico: há impulsos em $n = -1, 0, 1$, zeros em $n = 2, 3$, impulsos em $n = 4, 5$ e zeros em $n = 6, 7, 8$; o grupo de 3 impulsos volta a aparecer em $n = 9, 10, 11$ (e também em $n = -11, -10, -9$).
+O bloco que se repete é: 3 impulsos + 2 zeros + 2 impulsos + 3 zeros $= 10$ amostras.
+**Resposta**: Sim, periódico com $N_0 = 10$.
 
 **g) $x(t)$ descrito na figura P1.2g**
-A figura mostra uma onda quadrada de duração infinita. A onda fica no patamar "1" por uma duração de 2 unidades, e no patamar "-1" por mais 2 unidades, de modo que um ciclo completo ocupa $4$ unidades de tempo no eixo horizontal.
-**Resposta**: Sim, periódico com $T_0 = 4$.
+Longe da origem, a figura mostra uma onda quadrada que alterna entre os níveis $1$ e $0$, com cada patamar durando 1 unidade de tempo (pulsos em $[1,2]$, $[3,4]$, $[5,6]$, ... e em $[-4,-3]$, $[-2,-1]$, ...). Porém, próximo da origem aparece um pulso isolado de amplitude $-1$ (em torno de $t = 0$), que não se repete em nenhum outro ponto do eixo. Além disso, os pulsos à esquerda começam em instantes pares e os da direita em instantes ímpares, ou seja, o padrão não é o mesmo dos dois lados.
+Como não existe $T$ tal que $x(t + T) = x(t)$ para todo $t$, o sinal não é periódico.
+**Resposta**: Não periódico (aperiódico).
 
 **h) $x[n] = \cos(2n)$**
 A frequência angular discreta é $\Omega_0 = 2 \text{ rad/amostra}$.
@@ -316,7 +318,7 @@ $$I_{RMS} = \frac{V_{RMS}}{50} = \frac{5}{50} = 0,1 \text{ A}$$
 
 ## Questão 17
 **[1.5 Haykin, S.] Considere o sinal senoidal $x(t) = A \cos(\omega t + \phi)$. Determine a potência média de $x(t)$.**
-Como demonstrado na questão 15, o valor RMS de uma senoide é $X_{RMS} = A/\sqrt{2}$. A potência média de um sinal, se considerarmos resistências unitárias ou sua definição fundamental em sinais $P_\infty = X_{RMS}^2$, é:
+Como demonstrado na questão 16, o valor RMS de uma senoide é $X_{RMS} = A/\sqrt{2}$. A potência média de um sinal, se considerarmos resistências unitárias ou sua definição fundamental em sinais $P_\infty = X_{RMS}^2$, é:
 $$P_\infty = \left(\frac{A}{\sqrt{2}}\right)^2 = \frac{A^2}{2}$$
 
 **[1.6 Haykin, S.] A frequência angular $\Omega$ do sinal senoidal $x[n] = A \cos(\Omega n + \phi)$ satisfaz a condição para que $x[n]$ seja periódico. Determine a potencia média de $x[n]$.**
@@ -347,6 +349,160 @@ $$-\int_{1}^{0} u^2 du = \int_{0}^{1} u^2 du = \frac{1}{3}$$
 Somando todas as partes:
 $$E = \frac{1}{3} + 8 + \frac{1}{3} = 8 + \frac{2}{3} = \frac{24+2}{3} = \frac{26}{3}$$
 A energia total de $x(t)$ é $26/3$ Joules.
+
+**[1.12 Haykin, S.] Um sinal de pulso triangular $x(t)$ é descrito na figura P1.12. Esboce cada um dos sinais derivados de $x(t)$.**
+
+Pela Figura P1.12, o pulso triangular é:
+$$x(t) = \begin{cases} 1 - |t|, & |t| \le 1 \\ 0, & \text{caso contrário} \end{cases}$$
+Ou seja, vale 0 em $t = -1$, sobe linearmente até o pico 1 em $t = 0$ e desce linearmente até 0 em $t = 1$.
+
+**Método**: para um sinal $x(at + b)$, ele só é não-nulo quando o argumento está dentro do suporte original, isto é, $-1 \le at + b \le 1$. Resolvendo essa desigualdade para $t$, obtemos o novo intervalo. O pico ocorre onde o argumento vale 0, ou seja, $at + b = 0$. Como a amplitude não é alterada, todos os itens continuam sendo um triângulo de pico 1.
+
+**a) $x(3t)$**
+$$-1 \le 3t \le 1 \implies -\tfrac{1}{3} \le t \le \tfrac{1}{3}$$
+Pico em $3t = 0 \implies t = 0$.
+**Esboço**: triângulo de pico 1 em $t = 0$, indo de $t = -1/3$ a $t = 1/3$ (o pulso original comprimido por um fator 3).
+
+**b) $x(3t + 2)$**
+$$-1 \le 3t + 2 \le 1 \implies -3 \le 3t \le -1 \implies -1 \le t \le -\tfrac{1}{3}$$
+Pico em $3t + 2 = 0 \implies t = -2/3$.
+**Esboço**: triângulo de pico 1 em $t = -2/3$, indo de $t = -1$ a $t = -1/3$.
+
+**c) $x(-2t - 1)$**
+*(Observação: no livro do Haykin este item é $x(-2t-1)$; a "Lista de Sinais" transcreveu como $x(-2t-2)$. As duas versões estão resolvidas abaixo.)*
+
+Versão do livro, $x(-2t - 1)$:
+$$-1 \le -2t - 1 \le 1 \implies 0 \le -2t \le 2 \implies -1 \le t \le 0$$
+Pico em $-2t - 1 = 0 \implies t = -1/2$.
+**Esboço**: triângulo de pico 1 em $t = -1/2$, indo de $t = -1$ a $t = 0$. (Como o triângulo é par, a inversão não muda o formato: $x(-2t-1) = x(2t+1)$.)
+
+Versão da lista, $x(-2t - 2)$:
+$$-1 \le -2t - 2 \le 1 \implies 1 \le -2t \le 3 \implies -\tfrac{3}{2} \le t \le -\tfrac{1}{2}$$
+Pico em $-2t - 2 = 0 \implies t = -1$.
+**Esboço**: triângulo de pico 1 em $t = -1$, indo de $t = -3/2$ a $t = -1/2$.
+
+**d) $x(2(t + 2)) = x(2t + 4)$**
+$$-1 \le 2t + 4 \le 1 \implies -5 \le 2t \le -3 \implies -\tfrac{5}{2} \le t \le -\tfrac{3}{2}$$
+Pico em $2t + 4 = 0 \implies t = -2$.
+**Esboço**: triângulo de pico 1 em $t = -2$, indo de $t = -5/2$ a $t = -3/2$.
+
+**e) $x(2(t - 2)) = x(2t - 4)$**
+$$-1 \le 2t - 4 \le 1 \implies 3 \le 2t \le 5 \implies \tfrac{3}{2} \le t \le \tfrac{5}{2}$$
+Pico em $2t - 4 = 0 \implies t = 2$.
+**Esboço**: triângulo de pico 1 em $t = 2$, indo de $t = 3/2$ a $t = 5/2$.
+
+**f) $x(3t) + x(3t + 2)$**
+É a soma dos sinais dos itens (a) e (b). O triângulo de (b) ocupa $[-1, -1/3]$ e o de (a) ocupa $[-1/3, 1/3]$: eles não se sobrepõem, apenas se encostam em $t = -1/3$, onde ambos valem 0.
+**Esboço**: dois triângulos de pico 1 lado a lado. O sinal sobe de 0 (em $t = -1$) até 1 (em $t = -2/3$), desce até 0 (em $t = -1/3$), sobe novamente até 1 (em $t = 0$) e desce até 0 (em $t = 1/3$).
+
+---
+# 📚 BLOCO 5: Transformações da Variável Independente (Esboços)
+
+## Questão 19
+**[1.13 Oppenheim, A. V.] Considere o sinal de tempo contínuo $x(t) = \delta(t + 2) - \delta(t - 2)$. Calcule o valor de $E_\infty$ para o sinal $y(t) = \int_{-\infty}^{t} x(\tau) d\tau$.**
+
+*(Observação: na "Lista de Sinais" o limite superior da integral aparece como $\infty$, mas no livro do Oppenheim o limite é $t$. Se fosse $\infty$, a integral daria $1 - 1 = 0$ para todo $t$, e a energia seria trivialmente $E_\infty = 0$.)*
+
+Esta questão é idêntica à segunda parte da Questão 22 (que também é a Questão 3 da prova):
+$$y(t) = u(t + 2) - u(t - 2)$$
+$$E_\infty = \int_{-2}^{2} 1^2 dt = 4$$
+**Resposta**: $E_\infty = 4$ (resposta confirmada pelo gabarito do livro do Oppenheim).
+
+## Questão 20
+**[1.21 Oppenheim, A. V.] Um sinal de tempo contínuo $x(t)$ é mostrado na Figura P1.21. Esboce e coloque a escala cuidadosamente para cada um dos seguintes sinais.**
+
+Lendo a Figura P1.21, o sinal original é:
+$$x(t) = \begin{cases} t + 1, & -2 \le t < -1 \\ 1, & -1 \le t < 0 \\ 2, & 0 \le t < 1 \\ 2 - t, & 1 \le t \le 2 \\ 0, & \text{caso contrário} \end{cases}$$
+Ou seja: em $t = -2$ o sinal salta de 0 para $-1$ e sobe em rampa até 0 em $t = -1$; salta para 1 em $[-1, 0)$; salta para 2 em $[0, 1)$; em $t = 1$ cai para 1 e desce em rampa até 0 em $t = 2$.
+
+**Método**: para $x(\text{argumento})$, chamamos $s$ = argumento e, para cada trecho da definição acima, convertemos o intervalo de $s$ no intervalo correspondente de $t$, substituindo $s$ na expressão do trecho.
+
+**a) $x(t - 1)$** — deslocamento de 1 para a direita ($s = t - 1$):
+$$x(t-1) = \begin{cases} t, & -1 \le t < 0 \\ 1, & 0 \le t < 1 \\ 2, & 1 \le t < 2 \\ 3 - t, & 2 \le t \le 3 \\ 0, & \text{caso contrário} \end{cases}$$
+**Esboço**: rampa de $-1$ (em $t = -1$) até 0 (em $t = 0$); patamar 1 em $[0, 1)$; patamar 2 em $[1, 2)$; em $t = 2$ cai para 1 e desce em rampa até 0 em $t = 3$.
+
+**b) $x(2 - t)$** — reflexão seguida de deslocamento de 2 para a direita ($s = 2 - t$, ou seja, $t = 2 - s$):
+$$x(2-t) = \begin{cases} t, & 0 \le t \le 1 \\ 2, & 1 < t \le 2 \\ 1, & 2 < t \le 3 \\ 3 - t, & 3 < t \le 4 \\ 0, & \text{caso contrário} \end{cases}$$
+**Esboço**: rampa de 0 (em $t = 0$) até 1 (em $t = 1$); salta para 2 em $(1, 2]$; cai para 1 em $(2, 3]$; em $t = 3$ cai para 0 e desce em rampa até $-1$ em $t = 4$, voltando a 0 depois de $t = 4$.
+
+**c) $x(2t + 1)$** — compressão por 2 e avanço de $1/2$ ($s = 2t + 1$, ou seja, $t = (s - 1)/2$):
+$$x(2t+1) = \begin{cases} 2t + 2, & -\tfrac{3}{2} \le t < -1 \\ 1, & -1 \le t < -\tfrac{1}{2} \\ 2, & -\tfrac{1}{2} \le t < 0 \\ 1 - 2t, & 0 \le t \le \tfrac{1}{2} \\ 0, & \text{caso contrário} \end{cases}$$
+**Esboço**: em $t = -3/2$ salta para $-1$ e sobe em rampa até 0 em $t = -1$; patamar 1 em $[-1, -1/2)$; patamar 2 em $[-1/2, 0)$; em $t = 0$ cai para 1 e desce em rampa até 0 em $t = 1/2$.
+
+**d) $x(4 - t/2)$** — expansão por 2, reflexão e deslocamento ($s = 4 - t/2$, ou seja, $t = 8 - 2s$):
+$$x(4 - t/2) = \begin{cases} \tfrac{t}{2} - 2, & 4 \le t \le 6 \\ 2, & 6 < t \le 8 \\ 1, & 8 < t \le 10 \\ 5 - \tfrac{t}{2}, & 10 < t \le 12 \\ 0, & \text{caso contrário} \end{cases}$$
+**Esboço**: rampa de 0 (em $t = 4$) até 1 (em $t = 6$); salta para 2 em $(6, 8]$; cai para 1 em $(8, 10]$; em $t = 10$ cai para 0 e desce em rampa até $-1$ em $t = 12$, voltando a 0 depois de $t = 12$.
+
+**e) $[x(t) + x(-t)]u(t)$**
+O degrau $u(t)$ zera tudo para $t < 0$. Para $t > 0$, calculamos as duas parcelas:
+- $x(t)$: vale 2 em $(0, 1)$ e $2 - t$ em $(1, 2]$.
+- $x(-t)$: para $t \in (0, 1)$, temos $-t \in (-1, 0)$, logo $x(-t) = 1$; para $t \in (1, 2]$, temos $-t \in [-2, -1)$, logo $x(-t) = -t + 1 = 1 - t$.
+
+Somando:
+$$[x(t) + x(-t)]u(t) = \begin{cases} 3, & 0 < t < 1 \\ 3 - 2t, & 1 < t \le 2 \\ 0, & t < 0 \text{ ou } t > 2 \end{cases}$$
+(Os valores nos pontos isolados $t = 0$ e $t = 1$ não alteram o esboço.)
+**Esboço**: patamar 3 em $(0, 1)$; em $t = 1$ cai para 1 e desce em rampa até $-1$ em $t = 2$; volta a 0 depois de $t = 2$.
+
+**f) $x(t)\left[\delta\left(t + \tfrac{3}{2}\right) - \delta\left(t - \tfrac{3}{2}\right)\right]$**
+Pela propriedade de amostragem do impulso, $x(t)\delta(t - t_0) = x(t_0)\delta(t - t_0)$:
+$$x(t)\left[\delta\left(t + \tfrac{3}{2}\right) - \delta\left(t - \tfrac{3}{2}\right)\right] = x\left(-\tfrac{3}{2}\right)\delta\left(t + \tfrac{3}{2}\right) - x\left(\tfrac{3}{2}\right)\delta\left(t - \tfrac{3}{2}\right)$$
+Da definição de $x(t)$: $x(-3/2) = -3/2 + 1 = -1/2$ e $x(3/2) = 2 - 3/2 = 1/2$. Logo:
+$$= -\tfrac{1}{2}\delta\left(t + \tfrac{3}{2}\right) - \tfrac{1}{2}\delta\left(t - \tfrac{3}{2}\right)$$
+**Esboço**: dois impulsos de área $-1/2$ (setas para baixo), um em $t = -3/2$ e outro em $t = 3/2$.
+
+**[1.22 Oppenheim, A. V.] Um sinal de tempo discreto é mostrado na Figura P1.22. Esboce e coloque a escala cuidadosamente para cada um dos seguintes sinais.**
+
+Lendo a Figura P1.22, o sinal original é:
+
+| $n$ | $-4$ | $-3$ | $-2$ | $-1$ | $0$ | $1$ | $2$ | $3$ |
+|---|---|---|---|---|---|---|---|---|
+| $x[n]$ | $-1$ | $-1/2$ | $1/2$ | $1$ | $1$ | $1$ | $1$ | $1/2$ |
+
+e $x[n] = 0$ para os demais valores de $n$. Em cada item abaixo, os valores de $n$ não listados valem 0.
+
+**a) $x[n - 4]$** — deslocamento de 4 para a direita:
+
+| $n$ | $0$ | $1$ | $2$ | $3$ | $4$ | $5$ | $6$ | $7$ |
+|---|---|---|---|---|---|---|---|---|
+| $x[n-4]$ | $-1$ | $-1/2$ | $1/2$ | $1$ | $1$ | $1$ | $1$ | $1/2$ |
+
+**b) $x[3 - n]$** — reflexão seguida de deslocamento de 3 para a direita (o valor em $n$ é o valor original em $3 - n$):
+
+| $n$ | $0$ | $1$ | $2$ | $3$ | $4$ | $5$ | $6$ | $7$ |
+|---|---|---|---|---|---|---|---|---|
+| $x[3-n]$ | $1/2$ | $1$ | $1$ | $1$ | $1$ | $1/2$ | $-1/2$ | $-1$ |
+
+**c) $x[3n]$** — dizimação por 3 (só sobrevivem as amostras originais em múltiplos de 3: $x[-3]$, $x[0]$ e $x[3]$):
+
+| $n$ | $-1$ | $0$ | $1$ |
+|---|---|---|---|
+| $x[3n]$ | $-1/2$ | $1$ | $1/2$ |
+
+**d) $x[3n + 1]$** — o argumento $3n + 1$ percorre $\dots, -5, -2, 1, 4, \dots$; dentro do suporte só caem $x[-2]$ (em $n = -1$) e $x[1]$ (em $n = 0$):
+
+| $n$ | $-1$ | $0$ |
+|---|---|---|
+| $x[3n+1]$ | $1/2$ | $1$ |
+
+**e) $x[n]u[3 - n]$** — o degrau $u[3 - n]$ vale 1 para $n \le 3$ e zera as amostras com $n > 3$. Como $x[n]$ já é nulo para $n > 3$, o sinal não se altera:
+$$x[n]u[3 - n] = x[n]$$
+(mesmo esboço da Figura P1.22).
+
+**f) $x[n - 2]\delta[n - 2]$** — pela propriedade de amostragem, $x[n-2]\delta[n-2] = x[2-2]\delta[n-2] = x[0]\delta[n-2]$:
+$$x[n - 2]\delta[n - 2] = \delta[n - 2]$$
+(uma única amostra de valor 1 em $n = 2$).
+
+**g) $\tfrac{1}{2}x[n] + \tfrac{1}{2}(-1)^n x[n]$** — para $n$ par, $(-1)^n = 1$ e o resultado é $x[n]$; para $n$ ímpar, $(-1)^n = -1$ e o resultado é 0. Ou seja, mantém só as amostras de índice par:
+
+| $n$ | $-4$ | $-2$ | $0$ | $2$ |
+|---|---|---|---|---|
+| valor | $-1$ | $1/2$ | $1$ | $1$ |
+
+**h) $x[(n - 1)^2]$** — o argumento $(n-1)^2$ só assume valores $0, 1, 4, 9, \dots$. Dentro do suporte de $x$ só caem $(n-1)^2 = 0$ (em $n = 1$, dando $x[0] = 1$) e $(n-1)^2 = 1$ (em $n = 0$ e $n = 2$, dando $x[1] = 1$). Para $|n - 1| \ge 2$, o argumento é $\ge 4$ e o sinal é nulo:
+
+| $n$ | $0$ | $1$ | $2$ |
+|---|---|---|---|
+| $x[(n-1)^2]$ | $1$ | $1$ | $1$ |
 
 ---
 # 📚 BLOCO 6: Funções Singulares (Degrau e Impulso Unitário)
@@ -473,7 +629,7 @@ Isto é exatamente a definição de $y[n-N]$. Logo, um deslocamento na entrada c
 $$|y[n]| = \left| \sum_{k=n-n_0}^{n+n_0} x[k] \right| \le \sum_{k=n-n_0}^{n+n_0} |x[k]|$$
 Como $|x[k]| < B$, e a soma contém $(n+n_0) - (n-n_0) + 1 = 2n_0 + 1$ termos:
 $$|y[n]| < (2n_0 + 1)B$$
-A constante $C$ que limita a saída é $C = 2n_0 + 1$. O sistema é Bibo Estável.
+A constante $C$ que limita a saída é $C = (2n_0 + 1)B$. O sistema é BIBO Estável.
 
 **[1.19 Oppenheim, A. V.] Determine se o sistema é linear, invariante no tempo ou ambos.**
 
@@ -558,14 +714,14 @@ $y(t) = x(t) \cos(\omega_c t)$
 
 Analisando o diagrama de blocos de tempo discreto:
 1. O sinal de entrada $x[n]$ entra em um somador ($\Sigma$).
-2. A outra entrada desse somador é o sinal de feedback que vem diretamente da linha de saída $y[n]$.
-3. O resultado da soma é, portanto, $x[n] + y[n]$.
-4. Esta soma passa por um bloco de "Unit delay" (atraso unitário, $z^{-1}$), e o sinal resultante na saída deste bloco é precisamente o $y[n]$.
+2. A outra entrada desse somador é o sinal de feedback que vem diretamente da linha de saída $y[n]$. Na figura, essa entrada está marcada com sinal **negativo** ($-$), enquanto $x[n]$ entra com sinal positivo ($+$).
+3. O resultado do somador é, portanto, $x[n] - y[n]$.
+4. Este resultado passa por um bloco de "Unit delay" (atraso unitário, $z^{-1}$), e o sinal resultante na saída deste bloco é precisamente o $y[n]$.
 
 Portanto, a equação de diferenças que descreve a relação é:
-$$y[n] = \text{Atraso}(x[n] + y[n])$$
-$$y[n] = x[n-1] + y[n-1]$$
-*(Ou equivalentemente: $y[n+1] - y[n] = x[n]$)*.
+$$y[n] = \text{Atraso}(x[n] - y[n])$$
+$$y[n] = x[n-1] - y[n-1]$$
+$$y[n] + y[n-1] = x[n-1]$$
 
 ## Questão 29
 **[1.12 Haykin, S.] Os sistemas dados a seguir têm a entrada $x(t)$ ou $x[n]$ e saída $y(t)$ ou $y[n]$, respectivamente. Determine se cada um deles é (i) sem memória, (ii) estável, (iii) causal, (iv) linear e (v) invariante no tempo.**
@@ -651,7 +807,7 @@ Fazendo mudança no índice do somatório: $m = k+2 \implies y[n] = \sum_{m=-\in
 **l) $y[n] = 2x[2^n]$**
 - (i) Sem memória: **Não** (para $n=2$, $y[2] = 2x[4]$).
 - (ii) Estável: **Sim** (apenas escala a amplitude em 2 e avalia em outros índices).
-- (iii) Causal: **Não** (depende de $x[2^n]$, que é futuro para $n>1$).
+- (iii) Causal: **Não** (depende de $x[2^n]$, e $2^n > n$ para todo $n \ge 0$; por exemplo, $y[0] = 2x[1]$ já depende de uma amostra futura).
 - (iv) Linear: **Sim**.
 - (v) Invariante no tempo: **Não** (compressão exponencial do tempo).
 
@@ -662,23 +818,24 @@ Fazendo mudança no índice do somatório: $m = k+2 \implies y[n] = \sum_{m=-\in
 ## Questão 30
 **[1.12 Haykin, S.] Um sistema de tempo discreto é tanto linear como invariante no tempo. Suponha que a saída devido a uma entrada $x[n] = \delta[n]$ seja dada na Figura P1.41(a).**
 A saída para a entrada $\delta[n]$ é a resposta ao impulso $h[n]$ do sistema LTI. Analisando a Figura P1.41(a), obtemos:
-$h[n] = \delta[n-1] - \delta[n-2]$
-(ou seja, $h[1]=1$, $h[2]=-1$ e 0 para os demais).
+$h[n] = 2\delta[n] - \delta[n-1] + \delta[n-2]$
+(ou seja, $h[0]=2$, $h[1]=-1$, $h[2]=1$ e 0 para os demais).
 
 **a) Encontre a saída devido a uma entrada $x[n] = \delta[n-1]$.**
 Como o sistema é Invariante no Tempo (LTI), a saída para uma entrada deslocada é a resposta ao impulso deslocada da mesma forma:
-$$y[n] = h[n-1] = \delta[(n-1)-1] - \delta[(n-1)-2] = \delta[n-2] - \delta[n-3]$$
+$$y[n] = h[n-1] = 2\delta[n-1] - \delta[n-2] + \delta[n-3]$$
 
 **b) Encontre a saída devido a uma entrada $x[n] = 2\delta[n] - \delta[n-2]$.**
 Pela linearidade e invariância no tempo, a saída é uma combinação linear das respostas ao impulso:
 $$y[n] = 2h[n] - h[n-2]$$
-$$y[n] = 2(\delta[n-1] - \delta[n-2]) - (\delta[n-3] - \delta[n-4])$$
-$$y[n] = 2\delta[n-1] - 2\delta[n-2] - \delta[n-3] + \delta[n-4]$$
+$$y[n] = 2(2\delta[n] - \delta[n-1] + \delta[n-2]) - (2\delta[n-2] - \delta[n-3] + \delta[n-4])$$
+$$y[n] = 4\delta[n] - 2\delta[n-1] + 2\delta[n-2] - 2\delta[n-2] + \delta[n-3] - \delta[n-4]$$
+$$y[n] = 4\delta[n] - 2\delta[n-1] + \delta[n-3] - \delta[n-4]$$
 
 **c) Encontre a saída devido à entrada descrita na Figura P1.41(b).**
-Analisando a Figura P1.41(b), a entrada $x[n]$ possui um impulso de amplitude 2 em $n=0$ e um de amplitude -1 em $n=1$. Portanto:
-$x[n] = 2\delta[n] - \delta[n-1]$
+Analisando a Figura P1.41(b), a entrada $x[n]$ possui um impulso de amplitude 1 em $n=-1$, um de amplitude -1 em $n=0$ e um de amplitude 2 em $n=1$. Portanto:
+$x[n] = \delta[n+1] - \delta[n] + 2\delta[n-1]$
 A saída do sistema LTI será a convolução $y[n] = x[n] * h[n]$:
-$$y[n] = 2h[n] - h[n-1]$$
-$$y[n] = 2(\delta[n-1] - \delta[n-2]) - (\delta[n-2] - \delta[n-3])$$
-$$y[n] = 2\delta[n-1] - 3\delta[n-2] + \delta[n-3]$$
+$$y[n] = h[n+1] - h[n] + 2h[n-1]$$
+$$y[n] = (2\delta[n+1] - \delta[n] + \delta[n-1]) - (2\delta[n] - \delta[n-1] + \delta[n-2]) + (4\delta[n-1] - 2\delta[n-2] + 2\delta[n-3])$$
+$$y[n] = 2\delta[n+1] - 3\delta[n] + 6\delta[n-1] - 3\delta[n-2] + 2\delta[n-3]$$

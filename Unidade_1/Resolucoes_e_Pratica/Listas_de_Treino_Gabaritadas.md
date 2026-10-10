@@ -46,7 +46,7 @@ Analise a invariância no tempo para o sistema de modulação AM clássico: $y(t
 > Avaliando: As fases dos senos ficaram totalmente diferentes ($\sin(\omega_c t)$ versus $\sin(\omega_c t - \omega_c t_0)$). Logo, $y_1(t) \neq y_2(t)$.
 > **Gabarito: Sistema Variante no Tempo.**
 
-**Questão 5 (Energia do Sinal - Ref: Oppenheim Ex. 1.22)**
+**Questão 5 (Energia do Sinal - Ref: Oppenheim Prob. 1.3(a))**
 Determine a energia total do sinal $x(t) = e^{-2t}u(t)$.
 > **Resolução Passo a Passo:**
 > A presença da função degrau unitário $u(t)$ restringe o limite de integração (o sinal só existe para $t \ge 0$).
