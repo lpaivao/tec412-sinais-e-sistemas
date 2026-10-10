@@ -1,0 +1,59 @@
+\documentclass[11pt,a4paper,oneside]{report}
+
+% ---------- matemática e fontes (XeLaTeX) ----------
+\usepackage{amsmath,amssymb}
+\usepackage{fontspec}
+\usepackage[brazil]{babel}
+
+% ---------- página ----------
+\usepackage[margin=2.2cm]{geometry}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{longtable,booktabs,array,calc}
+\usepackage{framed}
+\usepackage{titlesec}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.55em}
+\setcounter{secnumdepth}{0}
+\setlength{\emergencystretch}{3em}
+\setcounter{tocdepth}{1}
+
+% títulos de questões podem ser longos: fonte menor que o padrão
+\titleformat{\subsection}{\normalfont\large\bfseries}{}{0pt}{}
+\titleformat{\subsubsection}{\normalfont\normalsize\bfseries}{}{0pt}{}
+\titlespacing*{\subsection}{0pt}{1.6em}{0.5em}
+
+% blocos de citação do markdown (resoluções passo a passo) com barra lateral
+\definecolor{barra}{gray}{0.6}
+\renewenvironment{quote}{\def\FrameCommand{{\color{barra}\vrule width 2pt}\hspace{0.8em}}\MakeFramed{\advance\hsize-\width\FrameRestore}}{\endMakeFramed}
+
+% macros usadas pelo código gerado pelo pandoc
+\providecommand{\tightlist}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\def\LTcaptype{none}
+
+\usepackage[hidelinks,bookmarksdepth=2]{hyperref}
+\usepackage{bookmark}
+
+\title{\textbf{TEC 412 -- Sinais e Sistemas}\\[0.4em]\large Unidade 1: resolução da prova, resoluções da lista, guia e listas de treino}
+\author{}
+\date{}
+
+\begin{document}
+\pagenumbering{alph}
+\maketitle
+\pagenumbering{roman}
+\tableofcontents
+\clearpage
+\pagenumbering{arabic}
+
+\input{partes/01_prova}
+\input{partes/02_resolucoes}
+\input{partes/03_algoritmos}
+\input{partes/04_treino_facil}
+\input{partes/05_treino_media}
+\input{partes/06_treino_dificil}
+\input{partes/07_treino_gabaritadas}
+\appendix
+\input{partes/08_mapeamento}
+
+\end{document}

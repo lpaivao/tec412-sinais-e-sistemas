@@ -1,0 +1,128 @@
+% Gerado a partir de Unidade_1/Resolucoes_e_Pratica/Listas_de_Treino_Gabaritadas.md
+\chapter{Listas de Treino: Sinais e Sistemas (TEC 412)}
+
+Listas contendo questões clássicas dos livros base (Oppenheim, Lathi, Haykin), focadas nos tópicos de prova, gabaritadas e resolvidas passo a passo.
+
+\section{NÍVEL FÁCIL: Fixação de Conceitos}\label{nuxedvel-fuxe1cil-fixauxe7uxe3o-de-conceitos}
+
+\textbf{Questão 1 (Sistema Linear? - Ref: Lathi)}\\
+Dado o sistema \(y(t) = 3x(t) + 2\), verifique se ele é linear.
+
+\begin{quote}
+\textbf{Resolução Passo a Passo:}\\
+Um sistema linear requer homogeneidade, o que implica que se a entrada for zero, a saída obrigatoriamente tem que ser zero.\\
+Testando para \(x(t) = 0\):
+\[y(t) = 3(0) + 2 = 2\]
+Como a saída para zero não foi nula (\(y(t) \neq 0\)), o sistema viola a linearidade na origem.\\
+\textbf{Gabarito: Sistema Não-Linear.}
+\end{quote}
+
+\textbf{Questão 2 (Sinal Par/Ímpar - Ref: Oppenheim)}\\
+Determine a parte par e a parte ímpar do sinal complexo \(x(t) = e^{jt}\).
+
+\begin{quote}
+\textbf{Resolução Passo a Passo:}\\
+Pela fórmula de Euler, abrimos a exponencial: \(x(t) = \cos(t) + j\sin(t)\).\\
+Parte Par: \(x_p(t) = \frac{x(t) + x(-t)}{2} = \frac{(\cos(t)+j\sin(t)) + (\cos(-t)+j\sin(-t))}{2}\).\\
+Sabendo que o cosseno engole o sinal (\(\cos(-t)=\cos(t)\)) e o seno cospe o sinal (\(\sin(-t)=-\sin(t)\)):
+\[x_p(t) = \frac{2\cos(t)}{2} = \cos(t)\]
+Parte Ímpar: \(x_i(t) = \frac{x(t) - x(-t)}{2} = \frac{(\cos(t)+j\sin(t)) - (\cos(t)-j\sin(t))}{2} = \frac{2j\sin(t)}{2} = j\sin(t)\).\\
+\textbf{Gabarito: A parte real (cosseno) é a parte Par. A parte imaginária (seno) é a parte Ímpar.}
+\end{quote}
+
+\textbf{Questão 3 (Causalidade e Memória - Ref: Haykin)}\\
+O sistema discreto \(y[n] = x[n] + x[n-2]\) é causal? Tem memória?
+
+\begin{quote}
+\textbf{Resolução Passo a Passo:}\\
+A saída \(y[n]\) no instante atual \(n\) depende de \(x[n]\) (presente) e \(x[n-2]\) (duas amostras no passado).\\
+Como ele olha para instantes diferentes do atual, ele precisa armazenar a informação. Logo, tem memória.\\
+Como ele olha pro passado, mas não solicita nada do futuro (\(n+1, n+2\)), ele respeita a causalidade física.\\
+\textbf{Gabarito: Causal e Com Memória.}
+\end{quote}
+
+\section{NÍVEL MÉDIO: Aplicação Algébrica e Escalonamento}\label{nuxedvel-muxe9dio-aplicauxe7uxe3o-alguxe9brica-e-escalonamento}
+
+\textbf{Questão 4 (Invariância no Tempo na Modulação - Ref: Haykin)}\\
+Analise a invariância no tempo para o sistema de modulação AM clássico: \(y(t) = \sin(\omega_c t) \cdot x(t)\).
+
+\begin{quote}
+\textbf{Resolução Passo a Passo:}\\
+Passo 1 (Atrasar a entrada): Seja \(x_1(t) = x(t-t_0)\). A saída fica \(y_1(t) = \sin(\omega_c t) \cdot x(t-t_0)\).\\
+Passo 2 (Atrasar todo o relógio do sistema): Substituindo ``t'' por ``\(t-t_0\)'' na equação final.
+\[y_2(t) = \sin(\omega_c (t-t_0)) \cdot x(t-t_0)\]
+Avaliando: As fases dos senos ficaram totalmente diferentes (\(\sin(\omega_c t)\) versus \(\sin(\omega_c t - \omega_c t_0)\)). Logo, \(y_1(t) \neq y_2(t)\).\\
+\textbf{Gabarito: Sistema Variante no Tempo.}
+\end{quote}
+
+\textbf{Questão 5 (Energia do Sinal - Ref: Oppenheim Prob. 1.3(a))}\\
+Determine a energia total do sinal \(x(t) = e^{-2t}u(t)\).
+
+\begin{quote}
+\textbf{Resolução Passo a Passo:}\\
+A presença da função degrau unitário \(u(t)\) restringe o limite de integração (o sinal só existe para \(t \ge 0\)).
+\[E = \int_{0}^{\infty} (e^{-2t})^2 dt = \int_{0}^{\infty} e^{-4t} dt\]
+\[E = \left[ \frac{e^{-4t}}{-4} \right]_0^\infty\]
+Aplicando os limites: em \(\infty\), \(e^{-\infty}\) vai a \(0\). Em \(0\), \(e^{0}\) é \(1\).
+\[E = 0 - \left(\frac{1}{-4}\right) = \frac{1}{4}\]
+\textbf{Gabarito: Sinal de Energia, E = 0.25 Joules.}
+\end{quote}
+
+\textbf{Questão 6 (Transformação de Variável Independente)}\\
+Se um pulso qualquer \(x(t)\) existe exclusivamente no intervalo \(-1 \le t \le 1\) (sendo nulo fora dele), em qual intervalo exato o sinal modificado \(y(t) = x(2t + 3)\) será não-nulo?
+
+\begin{quote}
+\textbf{Resolução Passo a Passo:}\\
+A ``bolha de existência'' da função exige que o argumento interno esteja entre -1 e 1.
+\[-1 \le (2t + 3) \le 1\]
+Subtraindo 3 de todos os lados simultaneamente:
+\[-4 \le 2t \le -2\]
+Dividindo tudo por 2 para isolar o \(t\):
+\[-2 \le t \le -1\]
+\textbf{Gabarito: O sinal comprimido e adiantado existirá apenas no intervalo de tempo de -2 até -1.}
+\end{quote}
+
+\section{NÍVEL DIFÍCIL: Análise Abstrata e Pegadinhas de Prova}\label{nuxedvel-difuxedcil-anuxe1lise-abstrata-e-pegadinhas-de-prova}
+
+\textbf{Questão 7 (Linearidade com Módulo - Ref: Lathi)}\\
+Mostre matematicamente por que o sistema retificador de onda completa \(y(t) = |x(t)|\) falha em ser linear, mesmo ele passando perfeitamente pela origem (\(x=0 \implies y=0\)).
+
+\begin{quote}
+\textbf{Resolução Passo a Passo:}\\
+Para um sistema ser linear, ele deve respeitar a \emph{Homogeneidade} (escalonamento). Se multiplicamos a entrada por \(a\), a saída deve multiplicar por \(a\).\\
+Se a entrada é \(x_1(t) = a \cdot x(t)\). A nova saída pela equação do sistema é \(y_1(t) = |a \cdot x(t)| = |a| \cdot |x(t)|\).\\
+Porém, a teoria da linearidade exige que a saída esperada seja estritamente \(a \cdot y(t) = a \cdot |x(t)|\).\\
+Vamos aplicar uma constante negativa, por exemplo \(a = -2\):\\
+Saída real gerada pelo sistema: \(|-2| \cdot |x(t)| = 2 |x(t)|\).\\
+Saída teórica exigida para ser linear: \(-2 \cdot |x(t)|\).\\
+Como \(2 \neq -2\), o sistema altera o sinal da constante negativa.\\
+\textbf{Gabarito: Não-Linear.}
+\end{quote}
+
+\textbf{Questão 8 (Causalidade da Reversão no Tempo - Ref: Oppenheim Ex. 1.27)}\\
+A inversão no tempo (como tocar uma fita de áudio de trás para frente) gera o sistema \(y[n] = x[-n]\). Prove se ele é causal ou não.
+
+\begin{quote}
+\textbf{Resolução Passo a Passo:}\\
+O raciocínio ingênuo tenta com \(n=3\): \(y[3] = x[-3]\). A saída hoje pede uma leitura do passado (-3). Até aí, parece causal.\\
+No entanto, para ser causal ele \textbf{nunca} pode pedir o futuro. Vamos testar a leitura em um tempo negativo, digamos \(n = -3\):
+\[y[-3] = x[-(-3)] = x[3]\]
+Para calcular o instante passado (\(-3\)), o sistema precisou ler a amostra do instante de tempo positivo (\(+3\)), que para ele é o ``futuro''.\\
+\textbf{Gabarito: Não-Causal.} (Sempre teste tempos negativos se houver inversão temporal).
+\end{quote}
+
+\textbf{Questão 9 (Estabilidade de Janela Móvel - Ref: Oppenheim)}\\
+O integrador clássico puro vimos que é instável. Mas o ``integrador de janela móvel'' (ou filtro de média), definido por \(y(t) = \int_{t-T}^{t} x(\tau) d\tau\) (onde \(T > 0\) é o tamanho da janela de integração), é BIBO Estável? Justifique.
+
+\begin{quote}
+\textbf{Resolução Passo a Passo:}\\
+A diferença aqui é que os limites não vão para o infinito. É uma ``janela'' que tem uma largura fixa de valor \(T\).\\
+Regra de estabilidade: assuma uma entrada limitada (\(|x(\tau)| \le B_x\)).
+\[|y(t)| = \left| \int_{t-T}^{t} x(\tau) d\tau \right| \le \int_{t-T}^{t} |x(\tau)| d\tau\]
+Substituindo a entrada pelo seu limite máximo e tirando-o da integral:
+\[|y(t)| \le B_x \cdot \int_{t-T}^{t} 1 d\tau\]
+Resolvendo a integral da constante 1:
+\[|y(t)| \le B_x \cdot [ \tau ]_{t-T}^{t} = B_x \cdot (t - (t-T)) = B_x \cdot T\]
+Como \(B_x\) é finito (a amplitude da entrada) e a largura da janela \(T\) também é finita e constante, a saída máxima nunca ultrapassa o valor finito \(B_x \cdot T\), não importa para onde o tempo ande. O integrador não explode porque ele ``esquece'' os valores antigos ao arrastar a janela!\\
+\textbf{Gabarito: O sistema É Estável.}
+\end{quote}
