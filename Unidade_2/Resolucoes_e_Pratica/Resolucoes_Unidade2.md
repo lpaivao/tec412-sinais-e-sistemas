@@ -43,54 +43,297 @@
 
 ---
 
-#### **Passo 2: Análise dos intervalos de sobreposição entre $x[k]$ e $h[n-k]$**
+#### **Passo 2: Montar o método — pedaços de $x[k]$, bordas da janela e eventos**
 
-- **Intervalo 1: Sem sobreposição à esquerda ($n + 1 < 0 \implies n < -1$)**
-  A frente direita da janela ($n+1$) ainda está antes do início de $x[k]$ (que começa em $k=0$).
-  $$\implies y[n] = 0, \quad \text{para } n < -1$$
+**2.1 — Pedaços de $x[k]$.** Um *pedaço* é um trecho de $k$ onde $x[k]$ segue **uma única fórmula** (aqui, uma constante):
+- **Pedaço A:** $x[k] = -1$ para $k = 0, 1, 2$;
+- **Pedaço B:** $x[k] = +1$ para $k = 3, 4, 5$.
 
-- **Intervalo 2: A frente $n+1$ entra na região negativa $[0, 2]$ ($0 \le n + 1 \le 2 \implies -1 \le n \le 1$)**
-  Como a cauda está em $n - 9 \le -8 < 0$, a interseção ocorre de $k = 0$ até $k = n+1$, onde $x[k] = -1$:
-  $$y[n] = \sum_{k=0}^{n+1} (-1)\cdot(1)$$
-  $$y[n] = -(n + 1 - 0 + 1)$$
-  $$y[n] = -n - 2, \quad \text{para } -1 \le n \le 1$$
-  *(Conferindo os pontos: $y[-1] = -1$, $y[0] = -2$, $y[1] = -3$).*
+Os **pontos de quebra** (onde a fórmula de $x[k]$ muda) são $k = 0$ (A começa), $k = 3$ (B começa) e $k = 6$ (primeiro $k$ após o fim do sinal). Fora de $[0, 5]$ temos $x[k] = 0$, que não contribui para a soma.
 
-- **Intervalo 3: A frente $n+1$ avança sobre a região positiva $[3, 5]$ ($3 \le n + 1 \le 5 \implies 2 \le n \le 4$)**
-  A cauda $n - 9 \le -5 < 0$ ainda está fora à esquerda. Portanto, a janela cobre **toda** a parte negativa ($0 \le k \le 2$) e avança sobre a parte positiva de $k = 3$ até $k = n+1$:
-  $$y[n] = \sum_{k=0}^{2} (-1) + \sum_{k=3}^{n+1} (+1)$$
-  $$y[n] = -3 + (n + 1 - 3 + 1)$$
-  $$y[n] = -3 + (n - 1)$$
-  $$y[n] = n - 4, \quad \text{para } 2 \le n \le 4$$
-  *(Conferindo os pontos: $y[2] = -2$, $y[3] = -1$, $y[4] = 0$).*
+**2.2 — Bordas da janela $h[n-k]$.** Pelo Passo 1, a janela vale $1$ de $k = n-9$ (**cauda**, borda esquerda) até $k = n+1$ (**frente**, borda direita), e ambas andam para a direita à medida que $n$ cresce.
 
-- **Intervalo 4: Englobamento total de $x[k]$ pela janela ($n + 1 \ge 6 \text{ e } n - 9 \le -1 \implies 5 \le n \le 8$)**
-  Neste trecho, a janela $[n-9, n+1]$ de largura 11 engloba inteiramente o sinal $x[k]$ ($[0, 5]$) com folga (nas bordas $n=4$ e $n=9$, as expressões dos intervalos vizinhos também dão $0$):
-  $$y[n] = \sum_{k=0}^{2} (-1) + \sum_{k=3}^{5} (+1)$$
-  $$y[n] = -3 + 3$$
-  $$y[n] = 0, \quad \text{para } 5 \le n \le 8$$
+**2.3 — Eventos.** A fórmula de $y[n]$ só muda quando uma borda da janela **cruza um ponto de quebra** de $x[k]$. Igualando cada borda a cada quebra e resolvendo para $n$ (o valor obtido é o **primeiro** $n$ da nova situação):
 
-- **Intervalo 5: A cauda $n-9$ atravessa a região negativa $[0, 2]$ ($0 \le n - 9 \le 2 \implies 9 \le n \le 11$)**
-  A frente $n+1 \ge 10 > 5$ já passou de todo o sinal $x[k]$. A cauda começa em $k = n-9$ (dentro de $[0, 2]$) e o sinal vai até $k = 5$:
-  $$y[n] = \sum_{k=n-9}^{2} (-1) + \sum_{k=3}^{5} (+1)$$
-  $$y[n] = -\big(2 - (n - 9) + 1\big) + 3$$
-  $$y[n] = -(12 - n) + 3$$
-  $$y[n] = n - 9, \quad \text{para } 9 \le n \le 11$$
-  *(Conferindo os pontos: $y[9] = 0$, $y[10] = 1$, $y[11] = 2$).*
+| Borda | Encontra a quebra | Equação | $n$ | O que acontece |
+|:---:|:---:|:---:|:---:|:---|
+| frente | $k=0$ | $n+1 = 0$ | $-1$ | a janela começa a tocar $x[k]$ |
+| frente | $k=3$ | $n+1 = 3$ | $2$ | a frente entra no pedaço B ($+1$) |
+| frente | $k=6$ | $n+1 = 6$ | $5$ | a frente passa do fim de $x[k]$ (sinal todo dentro da janela) |
+| cauda | $k=0$ | $n-9 = 0$ | $9$ | a cauda começa a "soltar" o pedaço A |
+| cauda | $k=3$ | $n-9 = 3$ | $12$ | a cauda chega ao pedaço B (A saiu todo) |
+| cauda | $k=6$ | $n-9 = 6$ | $15$ | a cauda passa do fim de $x[k]$ (fim da sobreposição) |
 
-- **Intervalo 6: A cauda $n-9$ atravessa a região positiva $[3, 5]$ ($3 \le n - 9 \le 5 \implies 12 \le n \le 14$)**
-  Agora a sobreposição ocorre apenas de $k = n-9$ até $k = 5$, onde $x[k] = +1$:
-  $$y[n] = \sum_{k=n-9}^{5} (+1)$$
-  $$y[n] = 5 - (n - 9) + 1$$
-  $$y[n] = 15 - n, \quad \text{para } 12 \le n \le 14$$
-  *(Conferindo os pontos: $y[12] = 3$, $y[13] = 2$, $y[14] = 1$).*
+Os 6 eventos cortam o eixo $n$ em **7 intervalos**:
 
-- **Intervalo 7: Sem sobreposição à direita ($n - 9 > 5 \implies n \ge 15$)**
-  A cauda $n-9$ já ultrapassou o fim de $x[k]$ ($k=5$).
-  $$\implies y[n] = 0, \quad \text{para } n \ge 15$$
+```
+   I1   │  I2   │  I3   │   I4    │  I5   │  I6   │  I7
+────────┼───────┼───────┼─────────┼───────┼───────┼──────► n
+       −1       2       5         9      12      15
+```
+
+> **Por que todos os eventos da frente vêm antes dos da cauda?** Porque a janela (11 amostras) é **mais larga** que $x[k]$ (6 amostras): a frente atravessa o sinal inteiro (até $n = 5$) antes de a cauda chegar ($n = 9$). Por isso a etapa do meio é "$x[k]$ inteiro dentro da janela". Se a janela fosse mais estreita que $x[k]$, a etapa do meio seria "janela inteira dentro de $x[k]$".
+
+**2.4 — Regras de conta usadas em todos os intervalos.**
+
+1. **Limites de cada pedaço** (interseção entre a janela e o pedaço):
+   - limite inferior $= \max(\text{cauda},\ \text{início do pedaço})$;
+   - limite superior $= \min(\text{frente},\ \text{fim do pedaço})$;
+   - se o limite inferior for **maior** que o superior, o pedaço não entra (soma vazia $= 0$).
+2. **Soma de uma constante $c$** de $k = A$ até $k = B$:
+   $$\sum_{k=A}^{B} c = c\cdot(B - A + 1)$$
+   ⚠️ O "$+1$" conta o próprio ponto inicial: de $0$ até $2$ são **3** termos ($0, 1, 2$), e não 2.
+
+---
+
+#### **Passo 3: Avaliar a soma de convolução em cada um dos 7 intervalos**
+
+Em todos os intervalos, o roteiro é o mesmo: **(a)** situação; **(b)** faixa de $n$; **(c)** posição da outra borda; **(d)** limites de cada pedaço; **(e)** soma montada; **(f)** conta; **(g)** prova real.
+
+---
+
+##### **Intervalo 1: $n \le -2$ (sem sobreposição à esquerda)**
+
+**(a) Situação:** a janela está inteira à esquerda de $x[k]$; ainda não tocou nada.
+
+**(b) Faixa de $n$:** não há sobreposição enquanto a frente estiver antes de $k = 0$:
+$$n + 1 < 0 \implies n < -1 \implies n \le -2$$
+
+**(c) Outra borda:** a cauda ($n-9$) está ainda mais à esquerda que a frente, logo também está fora.
+
+**(d) Limites:**
+- Pedaço A: inferior $= \max(n-9,\ 0) = 0$ (pois $n - 9 \le -11 < 0$); superior $= \min(n+1,\ 2) = n+1$ (pois $n+1 \le -1$). Como $0 > n+1$, a soma é **vazia**.
+- Pedaço B: inferior $= \max(n-9,\ 3) = 3$; superior $= \min(n+1,\ 5) = n+1 \le -1$. Como $3 > n+1$, a soma é **vazia**.
+
+**(e)/(f) Resultado:**
+$$y[n] = 0 + 0 = 0, \quad \text{para } n \le -2$$
+
+**(g) Prova real ($n = -2$):** a janela cobre $k = -11, \dots, -1$; nesses $k$, $x[k] = 0$ $\implies y[-2] = 0$. ✓
+
+---
+
+##### **Intervalo 2: $-1 \le n \le 1$ (a frente entra no pedaço A)**
+
+**(a) Situação:** a frente entrou no pedaço A ($-1$) e ainda não chegou ao pedaço B.
+
+**(b) Faixa de $n$:** a frente está dentro de $[0, 2]$:
+$$0 \le n + 1 \le 2$$
+Subtraindo $1$ dos três lados:
+$$-1 \le n \le 1$$
+- $n = -1$ é o primeiro instante (a frente chega em $k = 0$);
+- $n = 1$ é o último (a frente está em $k = 2$); em $n = 2$ ela pisa em $k = 3$ e começa o Intervalo 3.
+
+**(c) Outra borda:** como $n \le 1$:
+$$n - 9 \le 1 - 9 = -8 < 0$$
+A cauda está à esquerda de $x[k]$ e não corta nada; quem limita a soma pela esquerda é o próprio $x[k]$ (que começa em $k = 0$).
+
+**(d) Limites:**
+- Pedaço A: inferior $= \max(n-9,\ 0) = 0$ ($n-9$ é negativo); superior $= \min(n+1,\ 2) = n+1$ (pois $n+1 \le 2$) $\implies k$ de $0$ até $n+1$.
+- Pedaço B: inferior $= \max(n-9,\ 3) = 3$; superior $= \min(n+1,\ 5) = n+1 \le 2$. Como $3 > n+1$, **não entra**.
+
+**(e) Soma montada:**
+$$y[n] = \sum_{k=0}^{n+1} \underbrace{x[k]}_{-1}\cdot\underbrace{h[n-k]}_{1} = \sum_{k=0}^{n+1} (-1)$$
+
+**(f) Conta:**
+$$\text{nº de termos} = (n+1) - 0 + 1 = n + 2$$
+$$y[n] = (-1)\cdot(n+2)$$
+$$y[n] = -n - 2, \quad \text{para } -1 \le n \le 1$$
+
+**(g) Prova real:**
+
+| $n$ | Janela ($k$) | $k$ com $x[k] \ne 0$ | Soma direta | $-n-2$ |
+|:---:|:---:|:---:|:---:|:---:|
+| $-1$ | $-10 \dots 0$ | $0$ | $-1$ | $-1$ ✓ |
+| $0$ | $-9 \dots 1$ | $0, 1$ | $-1-1 = -2$ | $-2$ ✓ |
+| $1$ | $-8 \dots 2$ | $0, 1, 2$ | $-1-1-1 = -3$ | $-3$ ✓ |
+
+Detalhe do caso $n = 0$:
+```
+k        : -9 ... -1   0   1   2   3   4   5
+x[k]     :  0 ...  0  -1  -1  -1  +1  +1  +1
+h[0-k]   :  1 ...  1   1   1   0   0   0   0
+produto  :  0 ...  0  -1  -1   0   0   0   0     →  soma = −2
+```
+
+---
+
+##### **Intervalo 3: $2 \le n \le 4$ (a frente entra no pedaço B)**
+
+**(a) Situação:** a frente passou do pedaço A e entrou no pedaço B. O pedaço A está **inteiro** dentro da janela; o pedaço B, só em parte.
+
+**(b) Faixa de $n$:** a frente está dentro de $[3, 5]$:
+$$3 \le n + 1 \le 5$$
+Subtraindo $1$:
+$$2 \le n \le 4$$
+
+**(c) Outra borda:**
+$$n - 9 \le 4 - 9 = -5 < 0$$
+A cauda continua à esquerda de $x[k]$.
+
+**(d) Limites:**
+- Pedaço A: inferior $= \max(n-9,\ 0) = 0$; superior $= \min(n+1,\ 2) = 2$ (pois $n+1 \ge 3 > 2$) $\implies k$ de $0$ até $2$ (pedaço A inteiro).
+- Pedaço B: inferior $= \max(n-9,\ 3) = 3$; superior $= \min(n+1,\ 5) = n+1$ (pois $n+1 \le 5$) $\implies k$ de $3$ até $n+1$.
+
+**(e) Soma montada** (agora com duas parcelas):
+$$y[n] = \sum_{k=0}^{2} (-1)\cdot(1) + \sum_{k=3}^{n+1} (+1)\cdot(1)$$
+
+**(f) Conta**, uma parcela de cada vez:
+- Parcela A: $\text{nº de termos} = 2 - 0 + 1 = 3 \implies (-1)\cdot 3 = -3$
+- Parcela B: $\text{nº de termos} = (n+1) - 3 + 1 = n - 1 \implies (+1)\cdot(n-1) = n - 1$
+
+$$y[n] = -3 + (n - 1)$$
+$$y[n] = n - 4, \quad \text{para } 2 \le n \le 4$$
+
+**(g) Prova real:**
+
+| $n$ | Janela ($k$) | Contribuições | Soma direta | $n-4$ |
+|:---:|:---:|:---|:---:|:---:|
+| $2$ | $-7 \dots 3$ | A: $k=0,1,2 \to -3$; B: $k=3 \to +1$ | $-2$ | $-2$ ✓ |
+| $3$ | $-6 \dots 4$ | A: $-3$; B: $k=3,4 \to +2$ | $-1$ | $-1$ ✓ |
+| $4$ | $-5 \dots 5$ | A: $-3$; B: $k=3,4,5 \to +3$ | $0$ | $0$ ✓ |
+
+---
+
+##### **Intervalo 4: $5 \le n \le 8$ ($x[k]$ inteiro dentro da janela)**
+
+**(a) Situação:** a frente já passou do fim de $x[k]$ e a cauda ainda não chegou ao começo. O sinal inteiro está dentro da janela.
+
+**(b) Faixa de $n$:** duas condições simultâneas:
+- frente depois do fim de $x[k]$: $n + 1 \ge 6 \implies n \ge 5$;
+- cauda antes do começo de $x[k]$: $n - 9 < 0 \implies n < 9 \implies n \le 8$.
+
+$$\implies 5 \le n \le 8$$
+
+**(c) Outra borda:** já conferida no item (b) (as duas bordas estão fora de $[0, 5]$).
+
+**(d) Limites:**
+- Pedaço A: inferior $= \max(n-9,\ 0) = 0$ ($n-9 \le -1$); superior $= \min(n+1,\ 2) = 2$ ($n+1 \ge 6$) $\implies k$ de $0$ até $2$.
+- Pedaço B: inferior $= \max(n-9,\ 3) = 3$; superior $= \min(n+1,\ 5) = 5$ $\implies k$ de $3$ até $5$.
+
+**(e) Soma montada:**
+$$y[n] = \sum_{k=0}^{2} (-1)\cdot(1) + \sum_{k=3}^{5} (+1)\cdot(1)$$
+
+**(f) Conta:**
+- Parcela A: $\text{nº de termos} = 2 - 0 + 1 = 3 \implies (-1)\cdot 3 = -3$
+- Parcela B: $\text{nº de termos} = 5 - 3 + 1 = 3 \implies (+1)\cdot 3 = +3$
+
+$$y[n] = -3 + 3 = 0, \quad \text{para } 5 \le n \le 8$$
+
+O resultado não depende de $n$: enquanto $x[k]$ estiver inteiro dentro da janela, $y[n]$ é a soma de todas as amostras de $x$, que é $-3 + 3 = 0$.
+
+**(g) Prova real ($n = 6$):** a janela cobre $k = -3, \dots, 7$ e pega todo o sinal: $-1-1-1+1+1+1 = 0$. ✓
+
+---
+
+##### **Intervalo 5: $9 \le n \le 11$ (a cauda atravessa o pedaço A)**
+
+**(a) Situação:** a cauda entrou no pedaço A e começa a "soltar" as amostras $-1$; a frente continua depois do fim do sinal.
+
+**(b) Faixa de $n$:** a cauda está dentro de $[0, 2]$:
+$$0 \le n - 9 \le 2$$
+Somando $9$ aos três lados:
+$$9 \le n \le 11$$
+
+**(c) Outra borda:**
+$$n + 1 \ge 9 + 1 = 10 > 5$$
+A frente está depois do fim de $x[k]$.
+
+**(d) Limites:**
+- Pedaço A: inferior $= \max(n-9,\ 0) = n-9$ (pois $n-9 \ge 0$); superior $= \min(n+1,\ 2) = 2$ $\implies k$ de $n-9$ até $2$.
+- Pedaço B: inferior $= \max(n-9,\ 3) = 3$ (pois $n - 9 \le 2 < 3$); superior $= \min(n+1,\ 5) = 5$ $\implies k$ de $3$ até $5$.
+
+**(e) Soma montada:**
+$$y[n] = \sum_{k=n-9}^{2} (-1)\cdot(1) + \sum_{k=3}^{5} (+1)\cdot(1)$$
+
+**(f) Conta:**
+- Parcela A:
+  $$\text{nº de termos} = 2 - (n - 9) + 1 = 2 - n + 9 + 1 = 12 - n$$
+  $$\text{soma} = (-1)\cdot(12 - n) = n - 12$$
+- Parcela B: $\text{nº de termos} = 5 - 3 + 1 = 3 \implies (+1)\cdot 3 = 3$
+
+$$y[n] = (n - 12) + 3$$
+$$y[n] = n - 9, \quad \text{para } 9 \le n \le 11$$
+
+⚠️ **Atenção ao sinal:** $-(n - 9) = -n + 9$. É o erro de sinal mais comum neste intervalo.
+
+**(g) Prova real:**
+
+| $n$ | Janela ($k$) | Contribuições | Soma direta | $n-9$ |
+|:---:|:---:|:---|:---:|:---:|
+| $9$ | $0 \dots 10$ | A: $k=0,1,2 \to -3$; B: $+3$ | $0$ | $0$ ✓ |
+| $10$ | $1 \dots 11$ | A: $k=1,2 \to -2$; B: $+3$ | $1$ | $1$ ✓ |
+| $11$ | $2 \dots 12$ | A: $k=2 \to -1$; B: $+3$ | $2$ | $2$ ✓ |
+
+---
+
+##### **Intervalo 6: $12 \le n \le 14$ (a cauda atravessa o pedaço B)**
+
+**(a) Situação:** a cauda já passou do pedaço A (as amostras $-1$ saíram todas) e está dentro do pedaço B.
+
+**(b) Faixa de $n$:** a cauda está dentro de $[3, 5]$:
+$$3 \le n - 9 \le 5$$
+Somando $9$:
+$$12 \le n \le 14$$
+
+**(c) Outra borda:**
+$$n + 1 \ge 13 > 5$$
+A frente está depois do fim de $x[k]$.
+
+**(d) Limites:**
+- Pedaço A: inferior $= \max(n-9,\ 0) = n-9 \ge 3$; superior $= \min(n+1,\ 2) = 2$. Como $n - 9 > 2$, a soma é **vazia** (não entra).
+- Pedaço B: inferior $= \max(n-9,\ 3) = n-9$ (pois $n-9 \ge 3$); superior $= \min(n+1,\ 5) = 5$ $\implies k$ de $n-9$ até $5$.
+
+**(e) Soma montada:**
+$$y[n] = \sum_{k=n-9}^{5} (+1)\cdot(1)$$
+
+**(f) Conta:**
+$$\text{nº de termos} = 5 - (n - 9) + 1 = 5 - n + 9 + 1 = 15 - n$$
+$$y[n] = (+1)\cdot(15 - n)$$
+$$y[n] = 15 - n, \quad \text{para } 12 \le n \le 14$$
+
+**(g) Prova real:**
+
+| $n$ | Janela ($k$) | Contribuições | Soma direta | $15-n$ |
+|:---:|:---:|:---|:---:|:---:|
+| $12$ | $3 \dots 13$ | B: $k=3,4,5 \to +3$ | $3$ | $3$ ✓ |
+| $13$ | $4 \dots 14$ | B: $k=4,5 \to +2$ | $2$ | $2$ ✓ |
+| $14$ | $5 \dots 15$ | B: $k=5 \to +1$ | $1$ | $1$ ✓ |
+
+---
+
+##### **Intervalo 7: $n \ge 15$ (sem sobreposição à direita)**
+
+**(a) Situação:** a cauda passou do fim de $x[k]$; a janela está inteira à direita do sinal.
+
+**(b) Faixa de $n$:**
+$$n - 9 > 5 \implies n > 14 \implies n \ge 15$$
+
+**(c) Outra borda:** a frente ($n+1$) está ainda mais à direita que a cauda, logo também está fora.
+
+**(d) Limites:**
+- Pedaço A: inferior $= \max(n-9,\ 0) = n - 9 \ge 6$; superior $= 2$. Como $6 > 2$, **vazia**.
+- Pedaço B: inferior $= \max(n-9,\ 3) = n - 9 \ge 6$; superior $= 5$. Como $6 > 5$, **vazia**.
+
+**(e)/(f) Resultado:**
+$$y[n] = 0, \quad \text{para } n \ge 15$$
+
+**(g) Prova real ($n = 15$):** a janela cobre $k = 6, \dots, 16$; nesses $k$, $x[k] = 0$ $\implies y[15] = 0$. ✓
 
 ### **Resposta Final (Questão 1.1):**
-$$y[n] = \begin{cases} 0, & n < -1 \\ -n - 2, & -1 \le n \le 1 \\ n - 4, & 2 \le n \le 4 \\ 0, & 5 \le n \le 8 \\ n - 9, & 9 \le n \le 11 \\ 15 - n, & 12 \le n \le 14 \\ 0, & n \ge 15 \end{cases}$$
+$$y[n] = \begin{cases} 0, & n \le -2 \\ -n - 2, & -1 \le n \le 1 \\ n - 4, & 2 \le n \le 4 \\ 0, & 5 \le n \le 8 \\ n - 9, & 9 \le n \le 11 \\ 15 - n, & 12 \le n \le 14 \\ 0, & n \ge 15 \end{cases}$$
+
+**Sequência completa (amostras não nulas e zeros internos):**
+
+| $n$ | $-1$ | $0$ | $1$ | $2$ | $3$ | $4$ | $5$ | $6$ | $7$ | $8$ | $9$ | $10$ | $11$ | $12$ | $13$ | $14$ |
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| $y[n]$ | $-1$ | $-2$ | $-3$ | $-2$ | $-1$ | $0$ | $0$ | $0$ | $0$ | $0$ | $0$ | $1$ | $2$ | $3$ | $2$ | $1$ |
+
+**Verificações finais (prova real em segundos):**
+1. **Início:** início de $x$ + início de $h$ $= 0 + (-1) = -1$ ✓ (primeira amostra não nula em $n = -1$).
+2. **Fim:** fim de $x$ + fim de $h$ $= 5 + 9 = 14$ ✓ (última amostra não nula em $n = 14$).
+3. **Duração:** $L_x + L_h - 1 = 6 + 11 - 1 = 16$ amostras, de $n = -1$ até $n = 14$ ✓.
+4. **Soma total:** $\sum y = \left(\sum x\right)\cdot\left(\sum h\right) = 0 \cdot 11 = 0$; conferindo: $(-1-2-3-2-1) + (1+2+3+2+1) = -9 + 9 = 0$ ✓.
+5. **Fronteiras:** valores vizinhos de intervalos diferentes são coerentes ($y[1] = -3 \to y[2] = -2$; $y[11] = 2 \to y[12] = 3$) ✓.
 
 ---
 
