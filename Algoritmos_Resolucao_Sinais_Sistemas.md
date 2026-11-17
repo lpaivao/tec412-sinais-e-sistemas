@@ -227,3 +227,97 @@ Se entra um valor limitado (finito), tem que sair um valor limitado (finito).
     $$y(t) = t \cdot (1) = t$$
     Se avaliarmos quando $t \to \infty$, a saída $y(t) \to \infty$. 
     Ou seja, entrou um sinal com limite e a saída estourou pro infinito por conta do $t$ livre! Sistema **Instável**.
+
+
+---
+
+## PARTE 3: UNIDADE 2 — SISTEMAS LTI (SLITs), CONVOLUÇÃO E DIAGRAMAS EM BLOCOS
+
+### 8. Soma de Convolução em Tempo Discreto ($y[n] = x[n] * h[n]$)
+
+**Algoritmo de Resolução:**
+1. **Passo 1:** Escreva a fórmula da soma de convolução trocando a variável muda para $k$:
+   $$y[n] = \sum_{k=-\infty}^{\infty} x[k]h[n-k]$$
+2. **Passo 2:** Identifique as desigualdades impostas pelos degraus unitários $u[\cdot]$:
+   - Um degrau $u[k - k_0]$ exige $k - k_0 \ge 0 \implies k \ge k_0$ (**limite inferior** de $k$).
+   - Um degrau refletido $u[n - k - m_0]$ exige $n - k - m_0 \ge 0 \implies k \le n - m_0$ (**limite superior** de $k$).
+   - Um degrau lateral esquerdo $u[-k - k_1]$ exige $-k - k_1 \ge 0 \implies k \le -k_1$ (**outro limite superior** de $k$).
+3. **Passo 3:** Verifique quando o limite inferior supera o limite superior (onde não há sobreposição e $y[n] = 0$).
+4. **Passo 4:** Para os intervalos onde há sobreposição, aplique a fórmula da Progressão Geométrica (PG):
+   $$\sum_{k=A}^{B} r^k = \frac{r^A - r^{B+1}}{1 - r} \quad (\text{para } r \neq 1) \qquad \text{ou} \qquad \sum_{k=A}^{B} 1 = B - A + 1$$
+
+> **💡 Dica de Ouro / Macete Visual:**
+> Quando você convolui dois pulsos retangulares discretos de amplitudes $A_1, A_2$ e larguras $L_1, L_2$, o resultado é sempre um **trapézio** (ou triângulo, se $L_1 = L_2$) que:
+> - Começa na soma dos inícios ($n_{ini} = k_{1,ini} + k_{2,ini}$);
+> - Termina na soma dos fins ($n_{fim} = k_{1,fim} + k_{2,fim}$), com duração total de $L_1 + L_2 - 1$ amostras;
+> - Tem patamar máximo constante igual a $A_1 \cdot A_2 \cdot \min(L_1, L_2)$, com largura de $|L_1 - L_2| + 1$ amostras.
+
+**📚 Exemplos Práticos (da 2ª Lista):**
+*   **Fácil (Exponencial $\times$ Degrau — Oppenheim 2.3):** $x[n] = (1/2)^{n-2}u[n-2]$ e $h[n] = u[n+2]$.
+    - $u[k-2] \implies k \ge 2$; $u[n-k+2] \implies k \le n+2$.
+    - Para $n \ge 0$:
+      $$y[n] = \sum_{k=2}^{n+2} \left(\frac{1}{2}\right)^{k-2} = 2\left[1 - \left(\frac{1}{2}\right)^{n+1}\right]u[n]$$
+
+---
+
+### 9. Integral de Convolução em Tempo Contínuo ($y(t) = x(t) * h(t)$)
+
+**Algoritmo de Resolução (Método Gráfico por Intervalos):**
+1. **Passo 1:** Escreva $x(\tau)$ no eixo $\tau$.
+2. **Passo 2:** Escreva $h(t-\tau)$ substituindo todo $t$ de $h(t)$ por $(t-\tau)$ e isole $\tau$ nas desigualdades.
+   - Se $h(t)$ existe em $a \le t \le b$, então $h(t-\tau)$ existe em $a \le t - \tau \le b \iff t - b \le \tau \le t - a$.
+3. **Passo 3:** Deslize a janela $[t-b, t-a]$ da esquerda ($t \to -\infty$) para a direita ($t \to +\infty$), identificando cada mudança de fronteira.
+4. **Passo 4:** Integre em relação a $\tau$ (tratando $t$ como constante dentro da integral!).
+
+> **💡 Dica de Ouro / Macete de Verificação:**
+> Se um sinal é limitado e o outro é absolutamente integrável (sem impulsos de Dirac $\delta(t)$), a integral de convolução é sempre uma função **contínua** (sem saltos abruptos)! Portanto, **sempre substitua o valor de $t$ da fronteira** nos dois intervalos vizinhos: os valores têm que bater!
+
+---
+
+### 10. Memória, Causalidade e Estabilidade BIBO pela Resposta ao Impulso ($h[n]$ ou $h(t)$)
+
+**Algoritmo de Resolução Direta (Sem precisar usar a entrada $x$):**
+1. **Sem Memória:**
+   - Só é **SEM MEMÓRIA** se $h[n] = c\delta[n]$ (ou $h(t) = c\delta(t)$). Se existir qualquer valor não nulo fora da origem ($n \neq 0$ ou $t \neq 0$), tem **MEMÓRIA**.
+   - *Pegadinhas clássicas (Haykin 2.12):*
+     - $h[n] = 2u[n] - 2u[n-1] = 2\delta[n] \implies$ **Sem Memória!**
+     - $h[n] = \delta[n] + \text{sen}(\pi n) = \delta[n]$ (pois $\text{sen}(\pi n) = 0, \forall n \in \mathbb{Z}$) $\implies$ **Sem Memória!**
+2. **Causalidade:**
+   - Olhe apenas para o semieixo negativo ($n < 0$ ou $t < 0$).
+   - Se $h[n] = 0$ para todo $n < 0$ (ou $h(t) = 0$ para todo $t < 0$), é **CAUSAL**.
+   - Se houver qualquer amostra ou trecho não nulo antes de zero (como $u[n+2]$, $u[-n]$, $u(t+1)$, $e^{-2|t|}$), é **NÃO-CAUSAL**.
+3. **Estabilidade BIBO:**
+   - Calcule $\sum_{n=-\infty}^{\infty} |h[n]|$ (ou $\int_{-\infty}^{\infty} |h(t)|\,dt$).
+   - **Todo sinal de duração finita e amplitude finita é sempre ESTÁVEL.**
+   - Para exponenciais $r^n u[n]$ (direita): estável se $|r| < 1$.
+   - Para exponenciais $r^n u[-n]$ (esquerda): estável se $|r| > 1$ (pois para $n \to -\infty$, $r^n \to 0$!).
+   - Para exponenciais contínuas $e^{at}u(t)$ (direita): estável se $a < 0$.
+   - Para exponenciais contínuas $e^{at}u(-t)$ (esquerda): estável se $a > 0$ (pois para $t \to -\infty$, $e^{at} \to 0$!).
+
+---
+
+### 11. Diagramas em Blocos (Formas Direta I e Direta II) e Variáveis de Estado
+
+**Algoritmo de Resolução:**
+1. **Passo 1 (Padronização):**
+   - **Tempo Discreto (ED de ordem $N$):** Isole $y[n]$ (com $a_0 = 1$), identificando todos os coeficientes $a_1, \dots, a_N$ e $b_0, \dots, b_M$ (incluindo os coeficientes iguais a zero!):
+     $$y[n] = -a_1 y[n-1] - \dots - a_N y[n-N] + b_0 x[n] + b_1 x[n-1] + \dots + b_M x[n-M]$$
+   - **Tempo Contínuo (EDO de ordem $N$):** Com coeficiente líder $a_N = 1$ em $\frac{d^N}{dt^N}y(t)$, integre ambos os lados $N$ vezes (assumindo condições iniciais nulas), onde $v^{(k)}(t)$ denota a $k$-ésima integral sucessiva:
+     $$y(t) = -a_{N-1}y^{(1)}(t) - \dots - a_0 y^{(N)}(t) + b_N x(t) + b_{N-1}x^{(1)}(t) + \dots + b_0 x^{(N)}(t)$$
+2. **Passo 2 (Forma Direta I — usa $M + N$ elementos de memória):**
+   - Crie o sinal intermediário $w$ somando as entradas atrasadas/integradas:
+     $$w[n] = b_0 x[n] + \dots + b_M x[n-M] \qquad \text{e} \qquad y[n] = w[n] - a_1 y[n-1] - \dots - a_N y[n-N]$$
+3. **Passo 3 (Forma Direta II — Canônica, usa apenas $\max(N, M)$ elementos de memória no ramo central):**
+   - Crie o estado intermediário central $f$:
+     $$\begin{aligned}
+     f[n] &= x[n] - a_1 f[n-1] - \dots - a_N f[n-N] \\
+     y[n] &= b_0 f[n] + b_1 f[n-1] + \dots + b_M f[n-M]
+     \end{aligned}$$
+4. **Passo 4 (Variáveis de Estado para 2ª Ordem na Forma Direta II):**
+   - **Discreto ($b_0 = 1$):** $\mathbf{A} = \begin{bmatrix} -a_1 & -a_2 \\ 1 & 0 \end{bmatrix}, \; \mathbf{b} = \begin{bmatrix} 1 \\ 0 \end{bmatrix}, \; \mathbf{c} = \begin{bmatrix} b_1 - a_1 & b_2 - a_2 \end{bmatrix}, \; D = [1]$.
+   - **Contínuo ($a_2 = 1$):** $\mathbf{A} = \begin{bmatrix} -a_1 & -a_0 \\ 1 & 0 \end{bmatrix}, \; \mathbf{b} = \begin{bmatrix} 1 \\ 0 \end{bmatrix}, \; \mathbf{c} = \begin{bmatrix} b_1 - a_1 b_2 & b_0 - a_0 b_2 \end{bmatrix}, \; D = [b_2]$.
+
+**📚 Exemplo de Nível Prova (Exercício 1.3 da Apostila, pág. 52):**
+*   **Contínuo:** $\frac{d^2}{dt^2}y(t) + 3y(t) = \frac{d}{dt}x(t) + 2\frac{d^2}{dt^2}x(t)$.
+    - Integrando $N = 2$ vezes: $y(t) + 3y^{(2)}(t) = 2x(t) + x^{(1)}(t)$.
+    - Forma Direta II (2 integradores): $f(t) = x(t) - 3f^{(2)}(t)$ e $y(t) = 2f(t) + f^{(1)}(t)$.
