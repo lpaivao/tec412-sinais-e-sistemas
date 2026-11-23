@@ -233,44 +233,295 @@ Se entra um valor limitado (finito), tem que sair um valor limitado (finito).
 
 ## PARTE 3: UNIDADE 2 — SISTEMAS LTI (SLITs), CONVOLUÇÃO E DIAGRAMAS EM BLOCOS
 
-### 8. Soma de Convolução em Tempo Discreto ($y[n] = x[n] * h[n]$)
+### 8. Algoritmo Mestre da Convolução (Tempo Discreto **e** Tempo Contínuo)
 
-**Algoritmo de Resolução:**
-1. **Passo 1:** Escreva a fórmula da soma de convolução trocando a variável muda para $k$:
-   $$y[n] = \sum_{k=-\infty}^{\infty} x[k]h[n-k]$$
-2. **Passo 2:** Identifique as desigualdades impostas pelos degraus unitários $u[\cdot]$:
-   - Um degrau $u[k - k_0]$ exige $k - k_0 \ge 0 \implies k \ge k_0$ (**limite inferior** de $k$).
-   - Um degrau refletido $u[n - k - m_0]$ exige $n - k - m_0 \ge 0 \implies k \le n - m_0$ (**limite superior** de $k$).
-   - Um degrau lateral esquerdo $u[-k - k_1]$ exige $-k - k_1 \ge 0 \implies k \le -k_1$ (**outro limite superior** de $k$).
-3. **Passo 3:** Verifique quando o limite inferior supera o limite superior (onde não há sobreposição e $y[n] = 0$).
-4. **Passo 4:** Para os intervalos onde há sobreposição, aplique a fórmula da Progressão Geométrica (PG):
-   $$\sum_{k=A}^{B} r^k = \frac{r^A - r^{B+1}}{1 - r} \quad (\text{para } r \neq 1) \qquad \text{ou} \qquad \sum_{k=A}^{B} 1 = B - A + 1$$
+O roteiro é **o mesmo** nos dois mundos. Muda apenas o "dicionário":
 
-> **💡 Dica de Ouro / Macete Visual:**
-> Quando você convolui dois pulsos retangulares discretos de amplitudes $A_1, A_2$ e larguras $L_1, L_2$, o resultado é sempre um **trapézio** (ou triângulo, se $L_1 = L_2$) que:
-> - Começa na soma dos inícios ($n_{ini} = k_{1,ini} + k_{2,ini}$);
-> - Termina na soma dos fins ($n_{fim} = k_{1,fim} + k_{2,fim}$), com duração total de $L_1 + L_2 - 1$ amostras;
-> - Tem patamar máximo constante igual a $A_1 \cdot A_2 \cdot \min(L_1, L_2)$, com largura de $|L_1 - L_2| + 1$ amostras.
-
-**📚 Exemplos Práticos (da 2ª Lista):**
-*   **Fácil (Exponencial $\times$ Degrau — Oppenheim 2.3):** $x[n] = (1/2)^{n-2}u[n-2]$ e $h[n] = u[n+2]$.
-    - $u[k-2] \implies k \ge 2$; $u[n-k+2] \implies k \le n+2$.
-    - Para $n \ge 0$:
-      $$y[n] = \sum_{k=2}^{n+2} \left(\frac{1}{2}\right)^{k-2} = 2\left[1 - \left(\frac{1}{2}\right)^{n+1}\right]u[n]$$
+| | **Tempo Discreto** | **Tempo Contínuo** |
+|:---|:---:|:---:|
+| Fórmula | $y[n] = \displaystyle\sum_{k=-\infty}^{\infty} x[k]\,h[n-k]$ | $y(t) = \displaystyle\int_{-\infty}^{\infty} x(\tau)\,h(t-\tau)\,d\tau$ |
+| Variável muda (a que "corre") | $k$ (inteiro) | $\tau$ (real) |
+| Variável **constante** durante a conta | $n$ | $t$ |
+| Tamanho do trecho $[A, B]$ | $B - A + 1$ amostras | $B - A$ |
+| Soma/integral de uma constante $c$ | $c\,(B - A + 1)$ | $c\,(B - A)$ |
+| Fronteiras dos intervalos | inteiros: cada intervalo começa num $n$ exato | reais: usar $<$ ou $\le$ tanto faz (sem impulsos, $y$ é contínua) |
+| Duração da saída (sinais finitos) | $L_x + L_h - 1$ amostras | $L_x + L_h$ |
 
 ---
 
-### 9. Integral de Convolução em Tempo Contínuo ($y(t) = x(t) * h(t)$)
+#### **PASSO 0 — Triagem: existe atalho? (faça SEMPRE antes de deslizar qualquer coisa)**
 
-**Algoritmo de Resolução (Método Gráfico por Intervalos):**
-1. **Passo 1:** Escreva $x(\tau)$ no eixo $\tau$.
-2. **Passo 2:** Escreva $h(t-\tau)$ substituindo todo $t$ de $h(t)$ por $(t-\tau)$ e isole $\tau$ nas desigualdades.
-   - Se $h(t)$ existe em $a \le t \le b$, então $h(t-\tau)$ existe em $a \le t - \tau \le b \iff t - b \le \tau \le t - a$.
-3. **Passo 3:** Deslize a janela $[t-b, t-a]$ da esquerda ($t \to -\infty$) para a direita ($t \to +\infty$), identificando cada mudança de fronteira.
-4. **Passo 4:** Integre em relação a $\tau$ (tratando $t$ como constante dentro da integral!).
+Responda às 5 perguntas, nesta ordem:
 
-> **💡 Dica de Ouro / Macete de Verificação:**
-> Se um sinal é limitado e o outro é absolutamente integrável (sem impulsos de Dirac $\delta(t)$), a integral de convolução é sempre uma função **contínua** (sem saltos abruptos)! Portanto, **sempre substitua o valor de $t$ da fronteira** nos dois intervalos vizinhos: os valores têm que bater!
+1. **Algum dos sinais tem impulso?** Use a propriedade do deslocamento:
+   $$x(t) * \delta(t - t_0) = x(t - t_0) \qquad\qquad x[n] * \delta[n - n_0] = x[n - n_0]$$
+   Se $h$ for "pedaço normal + impulso", separe pela distributiva: o impulso dá a sua parcela **sem nenhuma conta**.
+   *Ex.: Oppenheim 2.22(d): $h(t) = \frac{4}{3}[u(t) - u(t-1)] - \frac{1}{3}\delta(t-2)$, e a parcela do impulso é simplesmente $-\frac{1}{3}x(t-2)$.*
+
+2. **Os dois sinais são "de tabela" (degrau, exponencial causal), talvez deslocados?** Use a tabela abaixo e some os deslocamentos:
+   $$x = x_0(\cdot - t_1),\ \ h = h_0(\cdot - t_2) \implies y = (x_0 * h_0)(\cdot - t_1 - t_2)$$
+
+3. **Algum sinal é uma soma de partes de natureza diferente** (ex.: uma parte à esquerda $3^n u[-n-1]$ e outra à direita $(1/3)^n u[n]$)? Use a **distributiva**, $y = x_1 * h + x_2 * h$, e resolva cada parcela separadamente (Oppenheim 2.25).
+
+4. **A entrada é periódica?** Então a saída é periódica com o **mesmo período**: calcule só um período (Oppenheim 2.22(e)).
+
+5. **É de fato uma convolução?** Se a relação não tem a forma $x[k]h[n-k]$ (ex.: $\sum x[k]g[n-2k]$, Oppenheim 2.7), **não** aplique o algoritmo; substitua a entrada diretamente na relação dada.
+
+**📋 Tabela de convoluções prontas** (com deslocamento, viram atalho):
+
+| Tempo Contínuo | Tempo Discreto |
+|:---|:---|
+| $u(t) * u(t) = t\,u(t)$ (rampa) | $u[n] * u[n] = (n+1)\,u[n]$ |
+| $u(t-a) * u(t-b) = (t-a-b)\,u(t-a-b)$ | $u[n-a] * u[n-b] = (n-a-b+1)\,u[n-a-b]$ |
+| $e^{-at}u(t) * u(t) = \dfrac{1 - e^{-at}}{a}\,u(t)$ | $a^n u[n] * u[n] = \dfrac{1 - a^{n+1}}{1 - a}\,u[n]$ |
+| $e^{-at}u(t) * e^{-bt}u(t) = \dfrac{e^{-at} - e^{-bt}}{b - a}\,u(t)$, $a \neq b$ | $a^n u[n] * b^n u[n] = \dfrac{a^{n+1} - b^{n+1}}{a - b}\,u[n]$, $a \neq b$ |
+| $e^{-at}u(t) * e^{-at}u(t) = t\,e^{-at}u(t)$ | $a^n u[n] * a^n u[n] = (n+1)\,a^n u[n]$ |
+
+> **💡 Macete do Trapézio (dois pulsos retangulares):** pulso de altura $A_1$ e largura $L_1$ convoluído com pulso de altura $A_2$ e largura $L_2$ dá **sempre um trapézio** (ou triângulo, se $L_1 = L_2$):
+> - começa na **soma dos inícios** e termina na **soma dos fins**;
+> - patamar de altura $A_1 A_2 \cdot \min(L_1, L_2)$;
+> - largura do patamar: $|L_1 - L_2|$ no contínuo, ou $|L_1 - L_2| + 1$ amostras no discreto.
+
+> **💡 Macete das Rampas (sinais feitos só de degraus):** se $x$ e $h$ são somas de degraus deslocados, $x = \sum_i c_i\,u(t - a_i)$ e $h = \sum_j d_j\,u(t - b_j)$, então
+> $$y(t) = \sum_i \sum_j c_i\,d_j\,(t - a_i - b_j)\,u(t - a_i - b_j)$$
+> É uma excelente **prova real** para o método gráfico (veja o Exemplo D).
+
+Se nenhum atalho resolver a questão por inteiro, siga os Passos 1 a 6.
+
+---
+
+#### **PASSO 1 — Escolher quem fica parado e quem desliza; quebrar o sinal parado em pedaços**
+
+1. A convolução é comutativa ($x * h = h * x$), então **você escolhe**:
+   - **fica parado** o sinal com **mais pedaços** (escadas, somas de degraus, seno recortado);
+   - **desliza** (é refletido) o sinal **mais simples** (um único pulso, uma única exponencial com um degrau).
+
+   No que segue, o parado se chama $x$ e o que desliza se chama $h$.
+
+2. Escreva o sinal parado na variável muda ($x[k]$ ou $x(\tau)$) e monte a **tabela de pedaços**. Um *pedaço* é um trecho onde $x$ segue **uma única fórmula**:
+
+   | Pedaço | Trecho | Fórmula |
+   |:---:|:---:|:---:|
+   | A | $[\text{início}_A, \text{fim}_A]$ | ... |
+   | B | $[\text{início}_B, \text{fim}_B]$ | ... |
+
+   *Truque para somas de degraus:* percorra o eixo da esquerda para a direita e, a cada degrau que "liga", some o seu coeficiente (Questão 1.1: $-1 \to -1 + 2 = +1 \to +1 - 1 = 0$).
+
+3. Liste os **pontos de quebra**: o início de cada pedaço e o **primeiro ponto depois do fim** do sinal (no discreto, $\text{fim} + 1$; no contínuo, o próprio fim).
+   - Lado infinito (ex.: $3^k$ para $k \le -1$) **não** gera ponto de quebra.
+
+---
+
+#### **PASSO 2 — Refletir e deslocar o que desliza: achar a janela $h[n-k]$ / $h(t-\tau)$**
+
+1. Ache o trecho onde $h$ é não nulo: $a \le (\text{argumento}) \le b$.
+2. Troque o argumento por $n - k$ (ou $t - \tau$) e isole a variável muda:
+   $$a \le n - k \le b \iff \boxed{\,n - b \le k \le n - a\,} \qquad\qquad a \le t - \tau \le b \iff \boxed{\,t - b \le \tau \le t - a\,}$$
+   - **Cauda** (borda esquerda) $= n - b$ (ou $t - b$);
+   - **Frente** (borda direita) $= n - a$ (ou $t - a$).
+3. Escreva também **a fórmula de $h$ dentro da janela**, substituindo o argumento inteiro. Em exponenciais, separe o que depende de $t$:
+   $$e^{-\beta(t - \tau)} = e^{-\beta t}\,e^{\beta\tau}$$
+4. **Janelas infinitas** (o caso que mais derruba aluno):
+   - $h$ vai para a **direita** até $\infty$ ($b = +\infty$, ex.: $u[n-1]$, $e^{-\beta t}u(t)$): a janela **não tem cauda**, vai de $-\infty$ até a frente;
+   - $h$ vai para a **esquerda** até $-\infty$ ($a = -\infty$, ex.: $e^{2t}u(1-t)$): a janela **não tem frente**, vai da cauda até $+\infty$.
+
+> **⚠️ Atenção ao refletir degraus:** $u(1 - (t - \tau)) = u(\tau - (t-1))$ liga para $\tau \ge t - 1$ (limite **inferior**). Já $u(t - \tau - t_0)$ liga para $\tau \le t - t_0$ (limite **superior**). Sempre isole a variável muda **com a desigualdade escrita**, nunca "de cabeça".
+
+---
+
+#### **PASSO 3 — Tabela de eventos: onde a fórmula de $y$ muda**
+
+A fórmula de $y$ só muda quando **uma borda da janela cruza um ponto de quebra**. Iguale cada borda a cada ponto de quebra $p$ e resolva para $n$ (ou $t$):
+$$\text{frente} = p \implies n = p + a \qquad\qquad \text{cauda} = p \implies n = p + b$$
+
+| Borda | Ponto de quebra $p$ | Equação | $n$ (ou $t$) | O que acontece |
+|:---:|:---:|:---:|:---:|:---|
+| frente | ... | $n - a = p$ | ... | a frente entra num novo pedaço (ou sai do sinal) |
+| cauda | ... | $n - b = p$ | ... | a cauda solta um pedaço inteiro |
+
+- Ordene os valores obtidos. **$N$ eventos cortam o eixo em $N + 1$ intervalos.**
+- O valor de cada evento é o **primeiro** $n$ da nova situação. No discreto, o intervalo vai de um evento até o **próximo evento menos 1**; no contínuo, de um evento até o próximo.
+- Eventos coincidentes se fundem (dão menos intervalos).
+- **Quem cruza primeiro?** Se a janela é **mais larga** que $x$, todos os eventos da frente vêm antes dos da cauda, e a etapa do meio é "$x$ inteiro dentro da janela". Se a janela é **mais estreita**, os eventos se intercalam, e a etapa do meio é "janela inteira dentro de $x$".
+
+---
+
+#### **PASSO 4 — Em cada intervalo: limites, montagem e conta**
+
+Para **cada** intervalo, siga o roteiro (é o mesmo usado na Questão 1.1):
+
+**(a) Situação:** descreva em palavras onde estão a frente e a cauda.
+
+**(b) Faixa de $n$ (ou $t$):** escreva-a pela tabela de eventos.
+
+**(c) Limites de cada pedaço** (interseção entre a janela e o pedaço):
+$$\text{limite inferior} = \max(\text{cauda},\ \text{início do pedaço}) \qquad \text{limite superior} = \min(\text{frente},\ \text{fim do pedaço})$$
+- Se o limite inferior **for maior** que o superior, o pedaço não entra (contribui com $0$).
+- Para decidir o $\max$/$\min$, **substitua um valor de $n$ (ou $t$) do intervalo**.
+
+**(d) Montagem:** some uma parcela por pedaço que entrou:
+$$y = \sum_{\text{pedaços}} \ \sum_{k = \text{inf}}^{\text{sup}} x_{\text{pedaço}}[k]\cdot h[n - k] \qquad \text{ou} \qquad y = \sum_{\text{pedaços}} \int_{\text{inf}}^{\text{sup}} x_{\text{pedaço}}(\tau)\cdot h(t - \tau)\,d\tau$$
+
+**(e) Conta:** tudo o que depende **só** de $n$ (ou $t$) sai da soma/integral como constante. Use o formulário abaixo.
+
+**(f) Prova real do intervalo:** escolha um $n$ do intervalo, liste os $k$ cobertos pela janela, faça a soma "na mão" e compare.
+
+**📐 Formulário:**
+
+- **PG finita** ($r \neq 1$): $\displaystyle\sum_{k=A}^{B} r^k = \frac{r^A - r^{B+1}}{1 - r}$; para $r = 1$, vale $B - A + 1$.
+- **PG infinita à direita** ($|r| < 1$): $\displaystyle\sum_{k=A}^{\infty} r^k = \frac{r^A}{1 - r}$ (primeiro termo sobre $1 - r$).
+- **PG infinita à esquerda** ($|r| > 1$): $\displaystyle\sum_{k=-\infty}^{B} r^k = \frac{r^{B+1}}{r - 1}$; alternativamente, faça $m = -k$ e caia no caso anterior com razão $1/r$.
+- **Integrais:**
+  $$\int e^{a\tau}d\tau = \frac{e^{a\tau}}{a} \qquad \int \tau\,e^{a\tau}d\tau = e^{a\tau}\left(\frac{\tau}{a} - \frac{1}{a^2}\right) \qquad \int \text{sen}(\omega\tau)\,d\tau = -\frac{\cos(\omega\tau)}{\omega}$$
+- **Exponencial com o expoente "anulado":** se ao juntar os termos o expoente em $\tau$ zerar (ex.: $\alpha = \beta$), a integral vira $\int 1\,d\tau$. Trate esse caso **separadamente**, porque a fórmula geral divide por zero.
+
+---
+
+#### **PASSO 5 — Montar a resposta final e esboçar**
+
+1. Junte tudo numa expressão por partes, intervalo por intervalo, incluindo os intervalos com $y = 0$.
+2. **Discreto:** faça a tabela $n \times y[n]$ das amostras não nulas e desenhe os "pirulitos".
+3. **Contínuo:** desenhe cada trecho (reta, parábola, exponencial) ligando os valores das fronteiras.
+
+---
+
+#### **PASSO 6 — Prova real final (5 verificações rápidas)**
+
+1. **Início e fim** (sinais de duração finita): o início de $y$ é $\text{início}_x + \text{início}_h$, e o fim de $y$ é $\text{fim}_x + \text{fim}_h$.
+2. **Duração:** $L_x + L_h - 1$ amostras no discreto, $L_x + L_h$ no contínuo.
+3. **Área/soma** (só se ambas convergirem):
+   $$\sum_n y[n] = \Big(\sum_n x[n]\Big)\Big(\sum_n h[n]\Big) \qquad\qquad \int y(t)\,dt = \Big(\int x(t)\,dt\Big)\Big(\int h(t)\,dt\Big)$$
+4. **Fronteiras:**
+   - **Contínuo sem impulsos:** $y$ é **contínua**, então os dois intervalos vizinhos **têm** de dar o mesmo valor na fronteira. Se não derem, há erro.
+   - **Discreto:** as fórmulas vizinhas costumam coincidir no ponto de fronteira. Por isso um gabarito pode escrever "$12 \le n \le 18$" onde você escreveu "$13 \le n \le 17$", e **ambos estão corretos**.
+5. **Um ponto qualquer** calculado direto pela definição.
+
+> **🚫 Erros clássicos:**
+> - Esquecer o "$+1$" na contagem de termos do discreto (de $0$ até $2$ são **3** termos).
+> - Refletir só o degrau e esquecer de trocar o argumento da exponencial: $h(t - \tau)$ é $e^{-\beta(t-\tau)}$, **não** $e^{-\beta\tau}$.
+> - Integrar em $t$ em vez de $\tau$: dentro da integral, **$t$ é constante**.
+> - Tratar $u(1 - t)$ como se ligasse para a direita (ele liga para a **esquerda**: $t \le 1$).
+> - Somar PG infinita divergente: confira $|r| < 1$ (à direita) ou $|r| > 1$ (à esquerda).
+> - Esquecer os intervalos de $y = 0$ na resposta final.
+
+---
+
+### 9. Exemplos Resolvidos com o Algoritmo Mestre (2ª Lista)
+
+*As resoluções completas, linha a linha, estão em `Unidade_2/Resolucoes_e_Pratica/Resolucoes_Unidade2.md`. Aqui o foco é **ver o algoritmo funcionando**.*
+
+**📌 Qual caminho usar em cada questão da lista:**
+
+| Questão | Caminho do algoritmo |
+|:---|:---|
+| 1.1 (sala, discreto) | Passos 1–6 completos: 2 pedaços × 2 bordas → 6 eventos → **7 intervalos** |
+| 1.2 (sala, contínuo) | Passos 1–6 completos: **7 intervalos** (Exemplo D) + prova pelas rampas |
+| 2.3 (Oppenheim 2.3) | **Atalho** do Passo 0.2: tabela + deslocamento (Exemplo A) |
+| 2.4 (Oppenheim 2.4) | Passos 1–6 com 4 eventos (Exemplo B) ou Macete do Trapézio |
+| 2.6 (Oppenheim 2.6) | Janela infinita, sem cauda: 1 evento → 2 intervalos (Exemplo C) |
+| 2.7 (Oppenheim 2.7) | **Não é convolução** (Passo 0.5): substitua a entrada direto |
+| 3.1(a) (Oppenheim 2.22a) | **Atalho** da tabela (exponencial × exponencial, com o caso $\alpha = \beta$) |
+| 3.1(b) (Oppenheim 2.22b) | Janela infinita, sem frente: 3 eventos → 4 intervalos (Exemplo E) |
+| 3.1(c) (Oppenheim 2.22c) | Passos 1–6 com um pedaço senoidal e uma janela retangular |
+| 3.1(d) (Oppenheim 2.22d) | Passo 0.1: impulso por deslocamento + pulso sobre a reta |
+| 3.1(e) (Oppenheim 2.22e) | Passo 0.4: entrada periódica, calcular só um período |
+| 4.1 (Oppenheim 2.25) | Passo 0.3: **distributiva** (parte esquerda + parte direita) |
+
+---
+
+**Exemplo A — Atalho da tabela (Oppenheim 2.3):** $x[n] = \left(\frac{1}{2}\right)^{n-2}u[n-2]$ e $h[n] = u[n+2]$.
+
+- **Passo 0.2:** $x[n] = x_0[n-2]$ com $x_0[n] = \left(\frac{1}{2}\right)^n u[n]$, e $h[n] = h_0[n+2]$ com $h_0[n] = u[n]$.
+- **Pela tabela:**
+  $$x_0 * h_0 = \frac{1 - \left(\frac{1}{2}\right)^{n+1}}{1 - \frac{1}{2}}u[n] = 2\left[1 - \left(\frac{1}{2}\right)^{n+1}\right]u[n]$$
+- **Deslocamento total:** $+2 - 2 = 0$, então nada muda:
+  $$y[n] = 2\left[1 - \left(\frac{1}{2}\right)^{n+1}\right]u[n]$$
+
+✓ Igual à Questão 2.1, sem montar nenhum somatório.
+
+---
+
+**Exemplo B — Discreto completo (Oppenheim 2.4):** $x[n] = 1$ para $3 \le n \le 8$, e $h[n] = 1$ para $4 \le n \le 15$.
+
+- **Passo 1:** fica parado $x$ (6 amostras). Há um único pedaço A, com $x[k] = 1$ em $[3, 8]$. Pontos de quebra: $3$ e $9$.
+- **Passo 2:** $a = 4$, $b = 15$, então a janela é $n - 15 \le k \le n - 4$ (12 amostras, mais larga que $x$).
+- **Passo 3:**
+
+  | Borda | $p$ | Equação | $n$ | Significado |
+  |:---:|:---:|:---:|:---:|:---|
+  | frente | 3 | $n - 4 = 3$ | 7 | começa a sobreposição |
+  | frente | 9 | $n - 4 = 9$ | 13 | $x$ inteiro dentro da janela |
+  | cauda | 3 | $n - 15 = 3$ | 18 | a cauda começa a soltar $x$ |
+  | cauda | 9 | $n - 15 = 9$ | 24 | fim da sobreposição |
+
+- **Passo 4:**
+  - $n \le 6$: $y = 0$.
+  - $7 \le n \le 12$: limites $[\max(n-15, 3),\ \min(n-4, 8)] = [3,\ n-4]$, logo $y = (n - 4) - 3 + 1 = n - 6$.
+  - $13 \le n \le 17$: limites $[3,\ 8]$, logo $y = 6$.
+  - $18 \le n \le 23$: limites $[n-15,\ 8]$, logo $y = 8 - (n - 15) + 1 = 24 - n$.
+  - $n \ge 24$: $y = 0$.
+- **Passo 6:**
+  - Início $= 3 + 4 = 7$ ✓; fim $= 8 + 15 = 23$ ✓; duração $= 6 + 12 - 1 = 17$ ✓.
+  - Soma: $\sum y = 6 \cdot 12 = 72$. Conferindo: $(1+2+3+4+5) + 6\cdot 7 + (5+4+3+2+1) = 15 + 42 + 15 = 72$ ✓.
+  - Fronteiras: $y[12] = 12 - 6 = 6$ coincide com o patamar, e por isso o gabarito escreve o patamar como $12 \le n \le 18$. São as mesmas amostras.
+
+---
+
+**Exemplo C — Discreto com janela infinita (Oppenheim 2.6):** $x[n] = 3^n u[-n-1]$ e $h[n] = u[n-1]$.
+
+- **Passo 1:** um único pedaço, $x[k] = 3^k$ para $k \le -1$ (infinito à esquerda). O único ponto de quebra é $p = 0$.
+- **Passo 2:** $h$ é não nulo em $[1, \infty)$, então $a = 1$ e $b = \infty$. A janela **não tem cauda**: é $k \le n - 1$.
+- **Passo 3:** frente $= 0 \implies n = 1$. Um evento, logo **2 intervalos**.
+- **Passo 4:**
+  - $n \le 0$: limite superior $= \min(n - 1, -1) = n - 1$, e então
+    $$y = \sum_{k=-\infty}^{n-1} 3^k = \frac{3^{n}}{3 - 1} = \frac{3^n}{2}$$
+  - $n \ge 1$: limite superior $= -1$, e então
+    $$y = \sum_{k=-\infty}^{-1} 3^k = \frac{3^0}{2} = \frac{1}{2}$$
+- **Passo 6:** em $n = 0$, $\frac{3^0}{2} = \frac{1}{2}$, que coincide com o outro ramo. Por isso o gabarito escreve "$n < 0$ / $n \ge 0$". ✓
+
+---
+
+**Exemplo D — Contínuo completo (Questão 1.2 da apostila):** $x(t) = u(t) + u(t-1) - 2u(t-2)$ e $h(t) = u(t-1) - u(t-4)$.
+
+- **Passo 1:** fica parado $x$, com o pedaço A valendo $1$ em $[0, 1)$ e o pedaço B valendo $2$ em $[1, 2)$. Pontos de quebra: $0$, $1$ e $2$.
+- **Passo 2:** $a = 1$, $b = 4$, então a janela é $t - 4 \le \tau \le t - 1$ (largura 3, mais larga que $x$).
+- **Passo 3:** frente $= 0, 1, 2 \implies t = 1, 2, 3$; cauda $= 0, 1, 2 \implies t = 4, 5, 6$. São 6 eventos, logo **7 intervalos**.
+- **Passo 4** (resultado):
+
+  | Intervalo | $y(t)$ |
+  |:---:|:---:|
+  | $t < 1$ | $0$ |
+  | $1 \le t < 2$ | $t - 1$ |
+  | $2 \le t < 3$ | $2t - 3$ |
+  | $3 \le t < 4$ | $3$ |
+  | $4 \le t < 5$ | $7 - t$ |
+  | $5 \le t < 6$ | $12 - 2t$ |
+  | $t \ge 6$ | $0$ |
+
+- **Passo 6:**
+  - **Continuidade:** em $t = 2$, os dois ramos dão $1 = 1$; em $t = 3$, $3 = 3$; em $t = 4$, $3 = 3$; em $t = 5$, $2 = 2$ ✓.
+  - **Área:** $\int x = 1 + 2 = 3$ e $\int h = 3$, logo $\int y$ deve ser $9$. Conferindo: $0{,}5 + 2 + 3 + 2{,}5 + 1 = 9$ ✓.
+  - **Prova pelas rampas** (Passo 0): com $r(t) = t\,u(t)$,
+    $$y(t) = r(t-1) + r(t-2) - 2r(t-3) - r(t-4) - r(t-5) + 2r(t-6)$$
+    Em $t = 3{,}5$: $2{,}5 + 1{,}5 - 2(0{,}5) = 3$ ✓.
+
+---
+
+**Exemplo E — Contínuo com janela infinita (Oppenheim 2.22(b)):** $x(t) = u(t) - 2u(t-2) + u(t-5)$ e $h(t) = e^{2t}u(1-t)$.
+
+- **Passo 1:** fica parado $x$, com o pedaço A valendo $+1$ em $[0, 2)$ e o pedaço B valendo $-1$ em $[2, 5)$. Pontos de quebra: $0$, $2$ e $5$.
+- **Passo 2:** $h$ é não nulo em $(-\infty, 1]$, então $a = -\infty$ e $b = 1$. A janela **não tem frente**: é $\tau \ge t - 1$. Dentro dela, $h(t - \tau) = e^{2(t - \tau)}$.
+- **Passo 3:** cauda $= 0, 2, 5 \implies t = 1, 3, 6$. Três eventos, logo **4 intervalos**.
+- **Passo 4:**
+  - $t < 1$: entram os pedaços A e B inteiros.
+  - $1 \le t < 3$: A entra de $t - 1$ até $2$; B entra inteiro.
+  - $3 \le t < 6$: só B, de $t - 1$ até $5$.
+  - $t \ge 6$: $y = 0$.
+
+  Os resultados de cada intervalo estão na Questão 3.1(b).
+- **Passo 6:**
+  - **Continuidade em $t = 3$:** os dois ramos dão $\frac{1}{2}(e^{-4} - e^{2})$ ✓.
+  - **Área:** $\int x = 2 - 3 = -1$ e $\int h = \int_{-\infty}^{1} e^{2t}\,dt = \frac{e^2}{2}$, logo $\int y = -\frac{e^2}{2} \approx -3{,}695$ ✓ (conferido numericamente).
 
 ---
 
