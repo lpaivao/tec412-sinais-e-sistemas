@@ -255,8 +255,16 @@ Responda às 5 perguntas, nesta ordem:
 
 1. **Algum dos sinais tem impulso?** Use a propriedade do deslocamento:
    $$x(t) * \delta(t - t_0) = x(t - t_0) \qquad\qquad x[n] * \delta[n - n_0] = x[n - n_0]$$
-   Se $h$ for "pedaço normal + impulso", separe pela distributiva: o impulso dá a sua parcela **sem nenhuma conta**.
-   *Ex.: Oppenheim 2.22(d): $h(t) = \frac{4}{3}[u(t) - u(t-1)] - \frac{1}{3}\delta(t-2)$, e a parcela do impulso é simplesmente $-\frac{1}{3}x(t-2)$.*
+   **De onde vem (escreva estas 2 linhas na prova):** o impulso $\delta(t - \tau - t_0)$ só é não nulo quando $t - \tau - t_0 = 0 \iff \tau = t - t_0$, e tem área $1$. Pela propriedade da amostragem, $\int f(\tau)\,\delta(\tau - \tau_0)\,d\tau = f(\tau_0)$:
+   $$x(t) * \delta(t - t_0) = \int_{-\infty}^{\infty} x(\tau)\,\delta(t - \tau - t_0)\,d\tau = x(\tau)\Big|_{\tau = t - t_0} = x(t - t_0)$$
+   Se $h$ for "pedaço normal + impulso", separe pela distributiva: a parcela do impulso sai **sem deslizar janela e sem dividir em intervalos**. É só deslocar o sinal e multiplicar pelo peso do impulso. A justificativa de 2 linhas acima continua obrigatória.
+   - Impulso em $t = +t_0$ **atrasa** o sinal: $\delta(t - 2)$ gera $x(t - 2)$, e não $x(t + 2)$.
+   - O peso multiplica: $c\,\delta(t - t_0)$ gera $c\,x(t - t_0)$.
+
+   *Ex.: Oppenheim 2.22(d):*
+   $$h(t) = \underbrace{\tfrac{4}{3}[u(t) - u(t-1)]}_{h_a(t)} \underbrace{-\ \tfrac{1}{3}\delta(t-2)}_{h_b(t)} \implies y(t) = x(t) * h_a(t) + x(t) * h_b(t)$$
+   Só a parcela $x \ast h_a$ exige integral (pulso de $0$ a $1$). A outra parcela é direta:
+   $$x \ast h_b = -\frac{1}{3}\,x(t-2) = -\frac{1}{3}\big[a(t-2) + b\big]$$
 
 2. **Os dois sinais são "de tabela" (degrau, exponencial causal), talvez deslocados?** Use a tabela abaixo e some os deslocamentos:
    $$x = x_0(\cdot - t_1),\ \ h = h_0(\cdot - t_2) \implies y = (x_0 * h_0)(\cdot - t_1 - t_2)$$
