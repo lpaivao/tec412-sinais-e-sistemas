@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Colinha de Convolução</title>
+<style>
+  @page { size: A4; margin: 7mm 7mm; }
+  * { box-sizing: border-box; }
+  body { font-family: "Segoe UI", Roboto, Arial, sans-serif; font-size: 7.9pt; color: #111; margin: 0; line-height: 1.28; }
+  h1 { font-size: 12.5pt; margin: 0; }
+  .sub { font-size: 7pt; color: #555; margin-bottom: 1.5mm; }
+  .cols { column-count: 2; column-gap: 4mm; }
+  .box { break-inside: avoid; margin-bottom: 2.2mm; }
+  h2 { font-size: 8.6pt; margin: 0 0 0.8mm; color: #fff; background: #c0392b; padding: 0.6mm 1.6mm; border-radius: 1mm; }
+  table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+  td, th { overflow-wrap: anywhere; }
+  td, th { border: 0.6px solid #bbb; padding: 0.55mm 1.1mm; vertical-align: top; text-align: left; }
+  th { background: #f1f1f1; font-weight: 600; }
+  .m { font-family: "Cambria Math", "Cambria", "Times New Roman", serif; font-size: 8.6pt; white-space: normal; }
+  .w { white-space: normal; }
+  .warn { color: #b03a2e; font-weight: 600; }
+  .tip { background: #fdf2f0; }
+  sup, sub { font-size: 70%; line-height: 0; }
+  ul { margin: 0.5mm 0 0 3.5mm; padding: 0; }
+  li { margin: 0.2mm 0; }
+</style>
+</head>
+<body>
+<h1>Colinha — Convolução (TEC 412, Unidade 2)</h1>
+<div class="sub">∗ = convolução · ⋅ = multiplicação · n, k inteiros · t, τ reais · u = degrau · δ = impulso</div>
+
+<div class="cols">
+
+<div class="box">
+<h2>1. Definição e janela</h2>
+<table>
+<tr><th></th><th>Discreto</th><th>Contínuo</th></tr>
+<tr><td>Fórmula</td><td class="m">y[n] = Σ<sub>k</sub> x[k]·h[n−k]</td><td class="m">y(t) = ∫ x(τ)·h(t−τ) dτ</td></tr>
+<tr><td>Fixo na conta</td><td>n (sai da soma)</td><td>t (sai da integral)</td></tr>
+<tr><td>Janela (h ≠ 0 em [a, b])</td><td class="m">n−b ≤ k ≤ n−a</td><td class="m">t−b ≤ τ ≤ t−a</td></tr>
+<tr><td>Cauda / frente</td><td class="m">n−b / n−a</td><td class="m">t−b / t−a</td></tr>
+<tr><td>Evento (borda = quebra p)</td><td colspan="2" class="m w">frente: n = p + a  ·  cauda: n = p + b  →  N eventos = N+1 intervalos</td></tr>
+<tr><td>Limites de cada pedaço</td><td colspan="2" class="m w">inf = max(cauda, início) · sup = min(frente, fim) · inf &gt; sup ⇒ 0</td></tr>
+<tr><td>Nº de termos / comprimento</td><td class="m">B − A + 1</td><td class="m">B − A</td></tr>
+</table>
+</div>
+
+<div class="box">
+<h2>2. Pares prontos (com deslocamento viram atalho)</h2>
+<table>
+<tr><th>Contínuo</th><th>Discreto</th></tr>
+<tr><td class="m">x(t) ∗ δ(t−t<sub>0</sub>) = x(t−t<sub>0</sub>)</td><td class="m">x[n] ∗ δ[n−n<sub>0</sub>] = x[n−n<sub>0</sub>]</td></tr>
+<tr><td class="m">u(t) ∗ u(t) = t·u(t)</td><td class="m">u[n] ∗ u[n] = (n+1)·u[n]</td></tr>
+<tr><td class="m">u(t−a) ∗ u(t−b) = (t−a−b)·u(t−a−b)</td><td class="m">u[n−a] ∗ u[n−b] = (n−a−b+1)·u[n−a−b]</td></tr>
+<tr><td class="m">e<sup>−at</sup>u(t) ∗ u(t) = <sup>1</sup>⁄<sub>a</sub>(1 − e<sup>−at</sup>)·u(t)</td><td class="m">a<sup>n</sup>u[n] ∗ u[n] = (1 − a<sup>n+1</sup>)/(1 − a)·u[n]</td></tr>
+<tr><td class="m">e<sup>−at</sup>u ∗ e<sup>−bt</sup>u = (e<sup>−at</sup> − e<sup>−bt</sup>)/(b − a)·u(t)</td><td class="m">a<sup>n</sup>u ∗ b<sup>n</sup>u = (a<sup>n+1</sup> − b<sup>n+1</sup>)/(a − b)·u[n]</td></tr>
+<tr><td class="m">a = b: t·e<sup>−at</sup>·u(t)</td><td class="m">a = b: (n+1)·a<sup>n</sup>·u[n]</td></tr>
+<tr><td class="m">x(t) ∗ u(t) = ∫<sub>−∞</sub><sup>t</sup> x(τ) dτ</td><td class="m">x[n] ∗ u[n] = Σ<sub>k≤n</sub> x[k] (acumulador)</td></tr>
+</table>
+</div>
+
+<div class="box">
+<h2>3. Impulso: multiplicar ≠ convoluir ≠ integrar</h2>
+<table>
+<tr><th>Operação</th><th>Resultado</th><th>Nome / efeito</th></tr>
+<tr><td class="m">x(t) · δ(t−t<sub>0</sub>)</td><td class="m">x(t<sub>0</sub>) · δ(t−t<sub>0</sub>)</td><td>amostragem: vira impulso de peso x(t<sub>0</sub>)</td></tr>
+<tr><td class="m">∫ x(t) · δ(t−t<sub>0</sub>) dt</td><td class="m">x(t<sub>0</sub>)</td><td>peneiramento: vira um <b>número</b></td></tr>
+<tr><td class="m">x(t) ∗ δ(t−t<sub>0</sub>)</td><td class="m">x(t−t<sub>0</sub>)</td><td>deslocamento: vira o <b>sinal atrasado</b></td></tr>
+<tr><td class="m">x(t) ∗ c·δ(t−t<sub>0</sub>)</td><td class="m">c · x(t−t<sub>0</sub>)</td><td>o peso multiplica</td></tr>
+<tr><td class="m">δ(at)</td><td class="m">δ(t)/|a|</td><td>escalonamento</td></tr>
+</table>
+<ul>
+<li><span class="warn">δ(t−2) atrasa:</span> gera x(t−2), nunca x(t+2).</li>
+<li>Na prova escreva: δ(t−τ−t<sub>0</sub>) ≠ 0 só em τ = t−t<sub>0</sub> ⇒ ∫x(τ)δ(t−τ−t<sub>0</sub>)dτ = x(t−t<sub>0</sub>).</li>
+<li>h = pulso + impulso ⇒ distributiva: só o pulso exige integral.</li>
+</ul>
+</div>
+
+<div class="box">
+<h2>4. Propriedades</h2>
+<table>
+<tr><td>Comutativa</td><td class="m">x ∗ h = h ∗ x  (desliza o mais simples)</td></tr>
+<tr><td>Distributiva / paralelo</td><td class="m">x ∗ (h<sub>1</sub> + h<sub>2</sub>) = x∗h<sub>1</sub> + x∗h<sub>2</sub> ⇒ h<sub>eq</sub> = h<sub>1</sub> + h<sub>2</sub></td></tr>
+<tr><td>Associativa / cascata</td><td class="m">(x ∗ h<sub>1</sub>) ∗ h<sub>2</sub> = x ∗ (h<sub>1</sub> ∗ h<sub>2</sub>) ⇒ h<sub>eq</sub> = h<sub>1</sub> ∗ h<sub>2</sub></td></tr>
+<tr><td>Deslocamento</td><td class="m">x(t−t<sub>1</sub>) ∗ h(t−t<sub>2</sub>) = y(t−t<sub>1</sub>−t<sub>2</sub>)</td></tr>
+<tr><td>Derivada</td><td class="m">y′(t) = x′(t) ∗ h(t) = x(t) ∗ h′(t)</td></tr>
+<tr><td>Área / soma</td><td class="m">∫y = (∫x)(∫h)  ·  Σy = (Σx)(Σh)</td></tr>
+<tr><td>Suporte</td><td class="m w">início<sub>y</sub> = início<sub>x</sub> + início<sub>h</sub> · fim<sub>y</sub> = fim<sub>x</sub> + fim<sub>h</sub></td></tr>
+<tr><td>Duração</td><td class="m">L<sub>x</sub> + L<sub>h</sub> − 1 (discreto) · L<sub>x</sub> + L<sub>h</sub> (contínuo)</td></tr>
+<tr><td>Entrada periódica</td><td class="w">saída periódica de mesmo período (provar: y(t+T) = y(t))</td></tr>
+</table>
+</div>
+
+<div class="box">
+<h2>5. Progressão geométrica e somas</h2>
+<table>
+<tr><td>PG finita (r ≠ 1)</td><td class="m">Σ<sub>k=A</sub><sup>B</sup> r<sup>k</sup> = (r<sup>A</sup> − r<sup>B+1</sup>)/(1 − r)</td></tr>
+<tr><td>r = 1</td><td class="m">Σ<sub>k=A</sub><sup>B</sup> 1 = B − A + 1</td></tr>
+<tr><td>Infinita à direita, |r| &lt; 1</td><td class="m">Σ<sub>k=A</sub><sup>∞</sup> r<sup>k</sup> = r<sup>A</sup>/(1 − r)</td></tr>
+<tr><td>Infinita à esquerda, |r| &gt; 1</td><td class="m">Σ<sub>k=−∞</sub><sup>B</sup> r<sup>k</sup> = r<sup>B+1</sup>/(r − 1)  (ou m = −k)</td></tr>
+<tr><td>Com fator k, |r| &lt; 1</td><td class="m">Σ<sub>k=0</sub><sup>∞</sup> k·r<sup>k</sup> = r/(1 − r)<sup>2</sup></td></tr>
+<tr><td>Divergência</td><td class="w">calcule S<sub>N</sub> fechada e faça N → ∞ (não basta "cresce")</td></tr>
+<tr class="tip"><td>Juntar potências</td><td class="m">3<sup>k</sup>·(¼)<sup>n−k</sup> = (¼)<sup>n</sup>·12<sup>k</sup>  ·  (⅓)<sup>−n</sup> = 3<sup>n</sup></td></tr>
+</table>
+</div>
+
+<div class="box">
+<h2>6. Integrais que mais caem</h2>
+<table>
+<tr><td class="m">∫ e<sup>aτ</sup> dτ = e<sup>aτ</sup>/a</td><td class="m">∫ τ e<sup>aτ</sup> dτ = e<sup>aτ</sup>(τ/a − 1/a<sup>2</sup>)</td></tr>
+<tr><td class="m">∫ sen(ωτ) dτ = −cos(ωτ)/ω</td><td class="m">∫ cos(ωτ) dτ = sen(ωτ)/ω</td></tr>
+<tr><td class="m">∫ (c + τ) dτ = (c + τ)<sup>2</sup>/2</td><td class="m">∫<sub>A</sub><sup>B</sup> c dτ = c(B − A)</td></tr>
+<tr class="tip"><td colspan="2" class="m w">e<sup>−β(t−τ)</sup> = e<sup>−βt</sup>·e<sup>βτ</sup> → e<sup>−βt</sup> sai da integral · se o expoente em τ zerar (α = β), trate à parte</td></tr>
+</table>
+</div>
+
+<div class="box">
+<h2>7. Macetes e pegadinhas</h2>
+<table>
+<tr><td class="m">u[n] − u[n−1] = δ[n]</td><td class="m">δ[n] + u[n−1] = u[n]</td></tr>
+<tr><td class="m">sen(πn) = 0 (n inteiro)</td><td class="m">cos(πn) = (−1)<sup>n</sup></td></tr>
+<tr><td class="m">cos(θ − π) = −cos θ</td><td class="m">cos π = −1 · sen π = 0</td></tr>
+<tr><td class="m w">u(1−t) liga para t ≤ 1 (esquerda)</td><td class="m w">u(τ−(t−1)) liga para τ ≥ t−1 (limite inferior)</td></tr>
+<tr><td colspan="2" class="w"><b>Trapézio:</b> pulso A<sub>1</sub>, L<sub>1</sub> ∗ pulso A<sub>2</sub>, L<sub>2</sub> → início = soma dos inícios, fim = soma dos fins, patamar A<sub>1</sub>A<sub>2</sub>·min(L<sub>1</sub>, L<sub>2</sub>), largura do patamar |L<sub>1</sub>−L<sub>2</sub>| (+1 no discreto)</td></tr>
+<tr><td colspan="2" class="w"><b>Rampas:</b> x, h só de degraus ⇒ y = ΣΣ c<sub>i</sub>d<sub>j</sub>·(t−a<sub>i</sub>−b<sub>j</sub>)·u(t−a<sub>i</sub>−b<sub>j</sub>)</td></tr>
+<tr><td colspan="2" class="w"><b>Contínuo sem impulso ⇒ y contínua:</b> os dois ramos têm de dar o mesmo valor na fronteira.</td></tr>
+<tr><td colspan="2" class="w"><b>Não é convolução</b> se não for x[k]·h[n−k] (ex.: Σ x[k]g[n−2k]): substitua direto.</td></tr>
+</table>
+</div>
+
+<div class="box">
+<h2>8. Sistema pela resposta ao impulso</h2>
+<table>
+<tr><td>Sem memória</td><td class="m">h = c·δ  (nada fora da origem)</td></tr>
+<tr><td>Causal</td><td class="m">h = 0 para n &lt; 0 (t &lt; 0): mostre um valor ≠ 0</td></tr>
+<tr><td>Estável (BIBO)</td><td class="m">Σ|h[n]| &lt; ∞  ·  ∫|h(t)| dt &lt; ∞</td></tr>
+<tr><td>r<sup>n</sup>u[n] / r<sup>n</sup>u[−n]</td><td class="m">estável se |r| &lt; 1 / se |r| &gt; 1</td></tr>
+<tr><td>e<sup>at</sup>u(t) / e<sup>at</sup>u(−t)</td><td class="m">estável se a &lt; 0 / se a &gt; 0</td></tr>
+<tr><td>Duração finita</td><td>sempre estável</td></tr>
+</table>
+</div>
+
+<div class="box">
+<h2>9. Roteiro de prova (cada intervalo)</h2>
+<ul>
+<li>Triagem: impulso? tabela? distributiva? periódico? é convolução?</li>
+<li>Fixa o de mais pedaços; desliza o mais simples; tabela de eventos.</li>
+<li>Por intervalo: <b>desenho</b> da janela → faixa → limites (max/min) → soma/integral → conta até o número → prova real.</li>
+<li>Final: resposta por partes + esboço de y + suporte, área e continuidade.</li>
+</ul>
+</div>
+
+</div>
+</body>
+</html>
